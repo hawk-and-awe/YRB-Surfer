@@ -59,48 +59,107 @@
   #static-overlay{position:absolute;inset:0;z-index:8;pointer-events:none;opacity:0;transition:opacity 0.15s;}
   #static-overlay.active{opacity:1;}
   #static-canvas{width:100%;height:100%;}
-
-  /* On-screen OSD — channel number + playlist counter (brief) */
   #channel-osd{position:absolute;top:8%;right:5%;z-index:15;font-family:'Press Start 2P',monospace;font-size:clamp(0.6rem,2.5vw,1.1rem);color:var(--crt-amber);text-shadow:2px 2px 0 rgba(0,0,0,0.8),0 0 10px rgba(255,176,0,0.4);opacity:0;transition:opacity 0.3s;pointer-events:none;}
   #channel-osd.visible{opacity:1;}
   #playlist-counter{position:absolute;top:17%;right:5%;z-index:15;font-family:'Share Tech Mono',monospace;font-size:clamp(0.4rem,1vw,0.55rem);color:#555;opacity:0;transition:opacity 0.3s;pointer-events:none;}
   #playlist-counter.visible{opacity:1;}
-
-  #status-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9;font-family:'VT323',monospace;font-size:clamp(1rem,3vw,1.5rem);color:var(--crt-green);text-shadow:0 0 10px var(--crt-green);text-align:center;pointer-events:none;opacity:0;transition:opacity 0.3s;}
+  /* Volume OSD */
+  #vol-osd{position:absolute;top:8%;left:5%;z-index:15;font-family:'Press Start 2P',monospace;font-size:clamp(0.35rem,1vw,0.5rem);color:var(--crt-green);text-shadow:0 0 8px rgba(57,255,20,0.4);opacity:0;transition:opacity 0.3s;pointer-events:none;}
+  #vol-osd.visible{opacity:1;}
+  #status-msg{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:14;font-family:'VT323',monospace;font-size:clamp(1rem,3vw,1.5rem);color:var(--crt-green);text-shadow:0 0 10px var(--crt-green);text-align:center;pointer-events:none;opacity:0;transition:opacity 0.3s;}
   #status-msg.visible{opacity:1;}
   #power-off-screen{position:absolute;inset:0;z-index:20;background:#000;display:flex;align-items:center;justify-content:center;border-radius:8px 8px 0 0;cursor:pointer;opacity:0;pointer-events:none;transition:opacity 0.5s;}
   #power-off-screen.active{opacity:1;pointer-events:auto;}
   #power-off-screen .dot{width:4px;height:4px;background:rgba(255,255,255,0.3);border-radius:50%;animation:shrink-dot 1s ease forwards;}
   @keyframes shrink-dot{0%{width:100%;height:2px;background:white;border-radius:0;}50%{width:30%;height:2px;background:rgba(255,255,255,0.6);border-radius:0;}100%{width:4px;height:4px;background:rgba(255,255,255,0.2);border-radius:50%;}}
 
+  /* ═══ FREQUENCY SELECTOR OVERLAY ═══ */
+  #freq-overlay{
+    position:absolute;inset:0;z-index:18;
+    background:rgba(0,0,0,0.92);
+    display:none;flex-direction:column;
+    padding:clamp(8px,2vw,20px);
+    overflow:hidden;
+  }
+  #freq-overlay.active{display:flex;}
+  #freq-overlay::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 1px,rgba(57,255,20,0.03) 1px,rgba(57,255,20,0.03) 2px);pointer-events:none;}
+
+  .freq-header{
+    font-family:'Press Start 2P',monospace;font-size:clamp(0.3rem,1vw,0.5rem);
+    color:var(--crt-amber);letter-spacing:2px;margin-bottom:clamp(4px,1vw,10px);
+    text-shadow:0 0 8px rgba(255,176,0,0.3);flex-shrink:0;
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .freq-header-hint{font-family:'Share Tech Mono',monospace;font-size:clamp(0.35rem,0.8vw,0.45rem);color:#444;letter-spacing:1px;}
+
+  .freq-list{
+    flex:1;overflow-y:auto;overflow-x:hidden;
+    scrollbar-width:thin;scrollbar-color:#333 transparent;
+    position:relative;z-index:1;
+  }
+  .freq-list::-webkit-scrollbar{width:4px;}
+  .freq-list::-webkit-scrollbar-track{background:transparent;}
+  .freq-list::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
+
+  .freq-item{
+    display:flex;align-items:center;gap:clamp(4px,1vw,10px);
+    padding:clamp(3px,0.6vw,6px) clamp(6px,1vw,12px);
+    cursor:pointer;transition:all 0.1s;border-radius:3px;
+    font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1.1vw,0.65rem);
+    color:#555;letter-spacing:1px;
+  }
+  .freq-item:hover{background:rgba(57,255,20,0.06);color:#888;}
+  .freq-item.selected{background:rgba(57,255,20,0.1);color:var(--crt-green);text-shadow:0 0 6px rgba(57,255,20,0.3);}
+  .freq-item.selected .freq-dot{background:var(--crt-green);box-shadow:0 0 6px var(--crt-green);}
+
+  .freq-dot{width:5px;height:5px;border-radius:50%;background:#333;flex-shrink:0;transition:all 0.2s;}
+  .freq-item-label{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .freq-item-example{color:#333;font-size:clamp(0.35rem,0.9vw,0.5rem);}
+
+  .freq-divider{
+    font-family:'Press Start 2P',monospace;font-size:clamp(0.2rem,0.6vw,0.3rem);
+    color:#333;letter-spacing:2px;padding:clamp(4px,0.8vw,8px) clamp(6px,1vw,12px) clamp(2px,0.4vw,4px);
+    border-bottom:1px solid #1a1a1a;margin-bottom:2px;
+  }
+  .freq-random{color:var(--crt-amber) !important;}
+  .freq-random .freq-dot{background:var(--crt-amber) !important;}
+  .freq-random.selected{background:rgba(255,176,0,0.1) !important;text-shadow:0 0 6px rgba(255,176,0,0.3) !important;}
+  .freq-random.selected .freq-dot{box-shadow:0 0 6px var(--crt-amber) !important;}
+
   /* ═══ PERSISTENT INFO STRIP ═══ */
   .info-strip{
-    background:#0a0a0a;
-    border-top:1px solid #1a1a1a;
-    border-radius:0 0 8px 8px;
+    background:#0a0a0a;border-top:1px solid #1a1a1a;border-radius:0 0 8px 8px;
     padding:clamp(6px,1.2vw,12px) clamp(10px,2vw,16px);
     display:flex;align-items:center;gap:clamp(8px,1.5vw,16px);
     min-height:clamp(40px,7vw,60px);
   }
-  /* Map badge — always visible */
   .info-map-badge{
-    font-family:'Press Start 2P',monospace;font-size:clamp(0.25rem,0.7vw,0.38rem);
+    font-family:'Press Start 2P',monospace;font-size:clamp(0.2rem,0.6vw,0.32rem);
     padding:clamp(3px,0.5vw,5px) clamp(5px,0.8vw,10px);border-radius:3px;
-    letter-spacing:1px;white-space:nowrap;flex-shrink:0;
-    transition:all 0.4s ease;
+    letter-spacing:1px;white-space:nowrap;flex-shrink:0;transition:all 0.4s;
   }
   .info-map-badge.fresh{background:rgba(57,255,20,0.1);color:var(--crt-green);border:1px solid rgba(57,255,20,0.25);}
   .info-map-badge.forgotten{background:rgba(255,176,0,0.1);color:var(--crt-amber);border:1px solid rgba(255,176,0,0.25);}
   .info-map-badge.ancient{background:rgba(255,50,50,0.1);color:var(--crt-red);border:1px solid rgba(255,50,50,0.25);}
   .info-map-badge.idle{background:rgba(255,255,255,0.03);color:#333;border:1px solid #1a1a1a;}
 
-  /* Text block */
   .info-text{flex:1;min-width:0;overflow:hidden;}
-  .info-keyphrase{font-family:'Share Tech Mono',monospace;font-size:clamp(0.5rem,1.2vw,0.7rem);color:var(--crt-green);text-shadow:0 0 6px rgba(57,255,20,0.3);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.4s;}
-  .info-title{font-family:'VT323',monospace;font-size:clamp(0.85rem,2.2vw,1.3rem);color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;transition:color 0.4s;}
-  .info-meta{font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.4s;}
+  .info-keyphrase{font-family:'Share Tech Mono',monospace;font-size:clamp(0.5rem,1.2vw,0.7rem);letter-spacing:2px;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:color 0.4s;}
+  .info-title{font-family:'VT323',monospace;font-size:clamp(0.85rem,2.2vw,1.3rem);color:#ccc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.3;}
+  .info-meta{font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-  /* YT link button */
+  /* Freq lock indicator — clickable */
+  .info-freq{
+    flex-shrink:0;display:flex;align-items:center;gap:4px;
+    padding:clamp(3px,0.5vw,5px) clamp(6px,0.8vw,10px);
+    background:rgba(255,255,255,0.03);border:1px solid #222;border-radius:3px;
+    font-family:'Share Tech Mono',monospace;font-size:clamp(0.4rem,0.9vw,0.55rem);
+    color:#444;cursor:pointer;transition:all 0.2s;letter-spacing:1px;white-space:nowrap;
+    max-width:clamp(80px,15vw,160px);overflow:hidden;text-overflow:ellipsis;
+  }
+  .info-freq:hover{border-color:#444;color:#666;}
+  .info-freq.locked{border-color:rgba(57,255,20,0.3);color:var(--crt-green);background:rgba(57,255,20,0.05);}
+
   .info-yt-link{
     flex-shrink:0;width:clamp(28px,4vw,40px);height:clamp(28px,4vw,40px);
     background:rgba(255,255,255,0.05);border:1px solid #222;border-radius:6px;
@@ -121,8 +180,14 @@
   .power-led{width:6px;height:6px;border-radius:50%;background:#300;box-shadow:0 0 2px rgba(0,0,0,0.5);transition:all 0.3s;flex-shrink:0;}
   .power-led.on{background:#f00;box-shadow:0 0 6px #f00,0 0 12px rgba(255,0,0,0.4);}
 
+  /* Volume knob */
   .knob-container{display:flex;flex-direction:column;align-items:center;gap:2px;}
-  .knob{width:clamp(24px,4vw,38px);height:clamp(24px,4vw,38px);background:radial-gradient(circle at 35% 35%,#555,#1a1a1a);border-radius:50%;border:2px solid #333;box-shadow:0 2px 6px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1);cursor:pointer;transition:transform 0.3s;position:relative;}
+  .knob{
+    width:clamp(24px,4vw,38px);height:clamp(24px,4vw,38px);
+    background:radial-gradient(circle at 35% 35%,#555,#1a1a1a);border-radius:50%;border:2px solid #333;
+    box-shadow:0 2px 6px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.1);
+    cursor:pointer;transition:transform 0.2s;position:relative;
+  }
   .knob::after{content:'';position:absolute;top:15%;left:50%;transform:translateX(-50%);width:2px;height:25%;background:#888;border-radius:1px;}
   .knob-label{font-family:'VT323',monospace;font-size:clamp(0.4rem,0.9vw,0.6rem);color:#665840;text-align:center;}
 
@@ -171,7 +236,7 @@
   <p>Put both files in a folder, open a terminal there, and run:</p>
   <code>python serve.py</code>
   <p>Then go to <strong style="color:var(--crt-green)">http://localhost:8666/yrb-surfer.html</strong></p>
-  <div class="small">On Windows use <strong>python</strong>, on Mac/Linux use <strong>python3</strong>.<br>Need Python? <a href="https://python.org" target="_blank">python.org</a> — check "Add to PATH" during install.</div>
+  <div class="small">On Windows use <strong>python</strong>, on Mac/Linux use <strong>python3</strong>.<br>Need Python? <a href="https://python.org" target="_blank">python.org</a></div>
 </div>
 
 <!-- SETUP -->
@@ -197,32 +262,41 @@
   <div class="tv-housing">
     <div class="tv-outer">
       <div class="tv-bezel">
-        <!-- SCREEN -->
         <div class="screen-container flicker" id="screen">
           <div class="screen-glare"></div>
           <div id="yt-player-wrap"><div id="yt-player"></div></div>
           <div id="static-overlay"><canvas id="static-canvas"></canvas></div>
           <div id="channel-osd">CH <span id="ch-num">01</span></div>
           <div id="playlist-counter"></div>
+          <div id="vol-osd"></div>
           <div id="status-msg"></div>
           <div id="power-off-screen"><div class="dot"></div></div>
+
+          <!-- FREQUENCY SELECTOR -->
+          <div id="freq-overlay">
+            <div class="freq-header">
+              <span>⟨ FREQUENCY LOCK ⟩</span>
+              <span class="freq-header-hint">F to close · ↑↓ navigate · Enter select</span>
+            </div>
+            <div class="freq-list" id="freq-list"></div>
+          </div>
         </div>
 
-        <!-- PERSISTENT INFO STRIP (below screen, inside bezel) -->
+        <!-- INFO STRIP -->
         <div class="info-strip">
           <div class="info-map-badge idle" id="info-map-badge">—</div>
           <div class="info-text">
-            <div class="info-keyphrase" id="info-keyphrase">WAITING FOR SIGNAL...</div>
+            <div class="info-keyphrase" id="info-keyphrase" style="color:#333;">WAITING FOR SIGNAL...</div>
             <div class="info-title" id="info-title">—</div>
             <div class="info-meta" id="info-meta">—</div>
           </div>
+          <div class="info-freq" id="info-freq" title="Frequency lock (F)">🎲 RND</div>
           <a class="info-yt-link" id="info-yt-link" href="#" target="_blank" title="Open on YouTube" style="visibility:hidden;">
             <svg viewBox="0 0 24 24" fill="none"><path d="M23 12s-3.2-7-11-7S1 12 1 12s3.2 7 11 7 11-7 11-7z" stroke="#c00" stroke-width="1.5"/><polygon points="10,8 16,12 10,16" fill="#c00"/></svg>
           </a>
         </div>
       </div>
 
-      <!-- CONTROLS -->
       <div class="tv-controls">
         <div class="tv-brand">GRAVEYARD ™</div>
         <div class="controls-right">
@@ -230,7 +304,7 @@
           <button class="pwr-btn" id="pwr-btn" title="Power (P)">⏻</button>
           <div class="ctrl-divider"></div>
           <div class="knob-container">
-            <div class="knob" id="knob-vol" title="Mute / Unmute (M)"></div>
+            <div class="knob" id="knob-vol" title="Volume (scroll or click)"></div>
             <div class="knob-label">VOL</div>
           </div>
           <div class="ctrl-divider"></div>
@@ -240,7 +314,7 @@
             <button class="map-btn m-ancient" id="map-btn-2" title="Map 3: Ancient (3)">ANCIENT</button>
           </div>
           <div class="ctrl-divider"></div>
-          <button class="warp-btn" id="warp-btn" title="New query from active map (D)">⌁ WARP</button>
+          <button class="warp-btn" id="warp-btn" title="New query (D)">⌁ WARP</button>
           <div class="ctrl-divider"></div>
           <div class="ch-btn-group">
             <button class="ch-btn" id="ch-up">CH ▲</button>
@@ -252,7 +326,7 @@
   </div>
   <div class="bottom-strip">
     <div class="tagline">exploring youtube's video graveyard — one channel at a time</div>
-    <div class="hotkeys"><span>↑↓</span> SURF &nbsp; <span>D</span> WARP &nbsp; <span>1 2 3</span> MAP &nbsp; <span>M</span> MUTE &nbsp; <span>P</span> POWER</div>
+    <div class="hotkeys"><span>↑↓</span> SURF &nbsp; <span>D</span> WARP &nbsp; <span>1 2 3</span> MAP &nbsp; <span>F</span> FREQ &nbsp; <span>M/scroll</span> VOL &nbsp; <span>P</span> POWER</div>
   </div>
 </div>
 
@@ -270,90 +344,109 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random
 function dateFmt(yMin,yMax){const y=yMax?rand(yMin,yMax):new Date().getFullYear();return`${y}${pad(rand(1,12),2)}${pad(rand(1,28),2)}`;}
 const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
+// ═══════════════════════════════════════
 // KEYPHRASE MAPS
+// ═══════════════════════════════════════
 const MAPS={
   fresh:{name:'MAP 1 — FRESH',short:'FRESH',order:'date',keys:[
-    {q:()=>`IMG ${rand(1000,9999)}`,l:'IMG (Smartphone)'},
-    {q:()=>`MVI ${rand(1000,9999)}`,l:'MVI (Camera)'},
-    {q:()=>dateFmt(),l:'YYYYMMDD'},
-    {q:()=>`WIN ${dateFmt()}`,l:'WIN (Webcam)'},
-    {q:()=>`VID ${dateFmt()}`,l:'VID'},
-    {q:()=>`PXL ${dateFmt()}`,l:'PXL (Pixel)'},
-    {q:()=>`InShot ${dateFmt()}`,l:'InShot'},
-    {q:()=>`"My Movie ${rand(1,15)}"`,l:'My Movie'},
-    {q:()=>'FullSizeRender',l:'FullSizeRender'},
-    {q:()=>'RPReplay',l:'RPReplay'},
-    {q:()=>'".MP4"',l:'.MP4'},{q:()=>'".MOV"',l:'.MOV'},{q:()=>'".AVI"',l:'.AVI'},{q:()=>'".3gp"',l:'.3gp'},
-    {q:()=>'"Untitled video"',l:'Untitled video'},
-    {q:()=>'"Copy of Copy of"',l:'Copy of Copy of'},
-    {q:()=>'Videoplayback',l:'Videoplayback'},
-    {q:()=>'"Bandicam"',l:'Bandicam'},
-    {q:()=>'"Javaw"',l:'Javaw (Minecraft)'},
-    {q:()=>'Robloxapp',l:'Robloxapp'},
-    {q:()=>'VLC Record',l:'VLC Record'},
-    {q:()=>`WhatsApp Video ${new Date().getFullYear()}`,l:'WhatsApp Video'},
-    {q:()=>`Capture ${dateFmt()}`,l:'Capture'},
-    {q:()=>'VTS 01',l:'VTS 01 (DVD)'},
-    {q:()=>`YouCut ${dateFmt()}`,l:'YouCut'},
+    {q:()=>`IMG ${rand(1000,9999)}`,l:'IMG (Smartphone)',ex:'IMG 4293'},
+    {q:()=>`MVI ${rand(1000,9999)}`,l:'MVI (Camera)',ex:'MVI 7201'},
+    {q:()=>dateFmt(),l:'YYYYMMDD (Date)',ex:'20260108'},
+    {q:()=>`WIN ${dateFmt()}`,l:'WIN (Webcam)',ex:'WIN 20260204'},
+    {q:()=>`VID ${dateFmt()}`,l:'VID (Generic)',ex:'VID 20251130'},
+    {q:()=>`PXL ${dateFmt()}`,l:'PXL (Pixel)',ex:'PXL 20260115'},
+    {q:()=>`InShot ${dateFmt()}`,l:'InShot (App)',ex:'InShot 20260201'},
+    {q:()=>`"My Movie ${rand(1,15)}"`,l:'My Movie (iMovie)',ex:'My Movie 5'},
+    {q:()=>'FullSizeRender',l:'FullSizeRender (iOS)',ex:'FullSizeRender'},
+    {q:()=>'RPReplay',l:'RPReplay (Screen Rec)',ex:'RPReplay'},
+    {q:()=>'".MP4"',l:'.MP4 (Filename)',ex:'.MP4'},
+    {q:()=>'".MOV"',l:'.MOV (Filename)',ex:'.MOV'},
+    {q:()=>'".AVI"',l:'.AVI (Filename)',ex:'.AVI'},
+    {q:()=>'".3gp"',l:'.3gp (Filename)',ex:'.3gp'},
+    {q:()=>'"Untitled video"',l:'Untitled video',ex:'Untitled video'},
+    {q:()=>'"Copy of Copy of"',l:'Copy of Copy of',ex:'Copy of Copy of'},
+    {q:()=>'Videoplayback',l:'Videoplayback',ex:'Videoplayback'},
+    {q:()=>'"Bandicam"',l:'Bandicam (Screen Rec)',ex:'Bandicam'},
+    {q:()=>'"Javaw"',l:'Javaw (Minecraft)',ex:'Javaw'},
+    {q:()=>'Robloxapp',l:'Robloxapp',ex:'Robloxapp'},
+    {q:()=>'VLC Record',l:'VLC Record',ex:'VLC Record'},
+    {q:()=>`WhatsApp Video ${new Date().getFullYear()}`,l:'WhatsApp Video',ex:'WhatsApp Video 2026'},
+    {q:()=>`Capture ${dateFmt()}`,l:'Capture (Screen)',ex:'Capture 20260203'},
+    {q:()=>'VTS 01',l:'VTS 01 (DVD Rip)',ex:'VTS 01'},
+    {q:()=>`YouCut ${dateFmt()}`,l:'YouCut (App)',ex:'YouCut 20260201'},
   ]},
   forgotten:{name:'MAP 2 — FORGOTTEN',short:'FORGOT',order:'viewCount',keys:[
-    {q:()=>`DSC ${rand(1000,9999)}`,l:'DSC (Camera)'},
-    {q:()=>`DSCF${rand(1000,9999)}`,l:'DSCF (Camera)'},
-    {q:()=>`DSCN${rand(1000,9999)}`,l:'DSCN (Camera)'},
-    {q:()=>`GOPR${rand(1000,9999)}`,l:'GOPR (GoPro)'},
-    {q:()=>`GH01${rand(1000,9999)}`,l:'GH01 (GoPro)'},
-    {q:()=>`DJI ${rand(1,2000)}`,l:'DJI (Drone)'},
-    {q:()=>`SAM ${rand(1000,9999)}`,l:'SAM (Camera)'},
-    {q:()=>`FILE${rand(1000,9999)}`,l:'FILE (Dashcam)'},
-    {q:()=>`MAH0${rand(1000,9999)}`,l:'MAH0 (Camera)'},
-    {q:()=>`MOV0${rand(1000,9999)}`,l:'MOV0 (Camera)'},
-    {q:()=>`M2U0${rand(1000,9999)}`,l:'M2U0 (Camcorder)'},
-    {q:()=>`SANY${rand(1000,9999)}`,l:'SANY (Camera)'},
-    {q:()=>`HPIM${rand(1000,9999)}`,l:'HPIM (Camera)'},
-    {q:()=>`SDC1${rand(1000,9999)}`,l:'SDC1 (Camera)'},
-    {q:()=>`GEDC${rand(1000,9999)}`,l:'GEDC (Camera)'},
-    {q:()=>`Video${rand(1000,9999)}`,l:'Video####'},
-    {q:()=>`AMBA${rand(1,5000)}`,l:'AMBA (Action Cam)'},
-    {q:()=>`SUNP${rand(1000,1500)}`,l:'SUNP (Camera)'},
-    {q:()=>`REC ${pad(rand(1,1000),4)}`,l:'REC (Dashcam)'},
-    {q:()=>`DSCI${rand(1,4000)}`,l:'DSCI (Camera)'},
-    {q:()=>'"Test upload"',l:'Test Upload'},
-    {q:()=>'"Axon Body 2 Video"',l:'Axon Body (BodyCam)'},
-    {q:()=>`Bandicam ${rand(2012,2023)} ${pad(rand(1,12),2)}`,l:'Bandicam (Old)'},
-    {q:()=>'"This video was uploaded from an Android phone"',l:'Android Upload'},
-    {q:()=>'"Sprint PictureMail"',l:'Sprint PictureMail'},
-    {q:()=>`AVSEQ${pad(rand(1,99),2)}`,l:'AVSEQ'},
-    {q:()=>'"копия видео"',l:'копия видео (RU)'},
-    {q:()=>`Flipagram ${pick(MO)} ${rand(2013,2019)}`,l:'Flipagram'},
+    {q:()=>`DSC ${rand(1000,9999)}`,l:'DSC (Camera)',ex:'DSC 4821'},
+    {q:()=>`DSCF${rand(1000,9999)}`,l:'DSCF (Fuji)',ex:'DSCF2910'},
+    {q:()=>`DSCN${rand(1000,9999)}`,l:'DSCN (Nikon)',ex:'DSCN4032'},
+    {q:()=>`GOPR${rand(1000,9999)}`,l:'GOPR (GoPro)',ex:'GOPR8374'},
+    {q:()=>`GH01${rand(1000,9999)}`,l:'GH01 (GoPro Hero)',ex:'GH017291'},
+    {q:()=>`DJI ${rand(1,2000)}`,l:'DJI (Drone)',ex:'DJI 0847'},
+    {q:()=>`SAM ${rand(1000,9999)}`,l:'SAM (Samsung)',ex:'SAM 2910'},
+    {q:()=>`FILE${rand(1000,9999)}`,l:'FILE (Dashcam)',ex:'FILE3847'},
+    {q:()=>`MAH0${rand(1000,9999)}`,l:'MAH0 (Camera)',ex:'MAH04921'},
+    {q:()=>`MOV0${rand(1000,9999)}`,l:'MOV0 (Camera)',ex:'MOV03847'},
+    {q:()=>`M2U0${rand(1000,9999)}`,l:'M2U0 (Camcorder)',ex:'M2U01932'},
+    {q:()=>`SANY${rand(1000,9999)}`,l:'SANY (Sanyo)',ex:'SANY3928'},
+    {q:()=>`HPIM${rand(1000,9999)}`,l:'HPIM (HP Cam)',ex:'HPIM2847'},
+    {q:()=>`SDC1${rand(1000,9999)}`,l:'SDC1 (Samsung)',ex:'SDC14829'},
+    {q:()=>`GEDC${rand(1000,9999)}`,l:'GEDC (GE Camera)',ex:'GEDC3318'},
+    {q:()=>`Video${rand(1000,9999)}`,l:'Video#### (Generic)',ex:'Video4829'},
+    {q:()=>`AMBA${rand(1,5000)}`,l:'AMBA (Action Cam)',ex:'AMBA0382'},
+    {q:()=>`SUNP${rand(1000,1500)}`,l:'SUNP (Camera)',ex:'SUNP1204'},
+    {q:()=>`REC ${pad(rand(1,1000),4)}`,l:'REC (Dashcam)',ex:'REC 0472'},
+    {q:()=>`DSCI${rand(1,4000)}`,l:'DSCI (Camera)',ex:'DSCI2847'},
+    {q:()=>'"Test upload"',l:'Test Upload',ex:'Test upload'},
+    {q:()=>'"Axon Body 2 Video"',l:'Axon Body (BodyCam)',ex:'Axon Body 2'},
+    {q:()=>`Bandicam ${rand(2012,2023)} ${pad(rand(1,12),2)}`,l:'Bandicam (Old)',ex:'Bandicam 2017 03'},
+    {q:()=>'"This video was uploaded from an Android phone"',l:'Android Upload',ex:'Android phone'},
+    {q:()=>'"Sprint PictureMail"',l:'Sprint PictureMail',ex:'Sprint PictureMail'},
+    {q:()=>`AVSEQ${pad(rand(1,99),2)}`,l:'AVSEQ (VCD)',ex:'AVSEQ01'},
+    {q:()=>'"копия видео"',l:'копия видео (RU)',ex:'копия видео'},
+    {q:()=>`Flipagram ${pick(MO)} ${rand(2013,2019)}`,l:'Flipagram',ex:'Flipagram March 2016'},
   ]},
   ancient:{name:'MAP 3 — ANCIENT',short:'ANCIENT',order:'viewCount',keys:[
-    {q:()=>'"You have new picture mail! (video)"',l:'Picture Mail!'},
-    {q:()=>'"Media1.3gp"',l:'Media1.3gp'},
-    {q:()=>'"Media1.3g2"',l:'Media1.3g2'},
-    {q:()=>'"Video.3g2"',l:'Video.3g2'},
-    {q:()=>'"New Multimedia Message"',l:'Multimedia Msg'},
-    {q:()=>'"Video from my phone"',l:'Video from phone'},
-    {q:()=>'"Video uploaded from my mobile phone"',l:'Mobile Upload'},
-    {q:()=>`Video00${rand(1,9)}`,l:'Video0XX'},
-    {q:()=>'"My Great Movie"',l:'My Great Movie'},
-    {q:()=>'"My First Project"',l:'My First Project'},
-    {q:()=>'"Vídeo desde mi teléfono"',l:'Vídeo (ES)'},
-    {q:()=>`muuvee00${pad(rand(1,40),2)}`,l:'muuvee'},
-    {q:()=>`0_VIDEO_0${pad(rand(1,54),2)}`,l:'0_VIDEO'},
-    {q:()=>'"You have received a new message"',l:'New Message'},
-    {q:()=>`"Recorded on ${pick(MO)} ${rand(1,28)}, ${rand(2007,2010)} using a Flip Video Camcorder"`,l:'Flip Camcorder'},
+    {q:()=>'"You have new picture mail! (video)"',l:'Picture Mail!',ex:'picture mail!'},
+    {q:()=>'"Media1.3gp"',l:'Media1.3gp',ex:'Media1.3gp'},
+    {q:()=>'"Media1.3g2"',l:'Media1.3g2',ex:'Media1.3g2'},
+    {q:()=>'"Video.3g2"',l:'Video.3g2',ex:'Video.3g2'},
+    {q:()=>'"New Multimedia Message"',l:'Multimedia Msg',ex:'Multimedia Message'},
+    {q:()=>'"Video from my phone"',l:'Video from phone',ex:'Video from my phone'},
+    {q:()=>'"Video uploaded from my mobile phone"',l:'Mobile Upload',ex:'mobile phone'},
+    {q:()=>`Video00${rand(1,9)}`,l:'Video0XX',ex:'Video003'},
+    {q:()=>'"My Great Movie"',l:'My Great Movie',ex:'My Great Movie'},
+    {q:()=>'"My First Project"',l:'My First Project',ex:'My First Project'},
+    {q:()=>'"Vídeo desde mi teléfono"',l:'Vídeo (ES)',ex:'Vídeo desde mi teléfono'},
+    {q:()=>`muuvee00${pad(rand(1,40),2)}`,l:'muuvee',ex:'muuvee0023'},
+    {q:()=>`0_VIDEO_0${pad(rand(1,54),2)}`,l:'0_VIDEO',ex:'0_VIDEO_023'},
+    {q:()=>'"You have received a new message"',l:'New Message',ex:'new message'},
+    {q:()=>`"Recorded on ${pick(MO)} ${rand(1,28)}, ${rand(2007,2010)} using a Flip Video Camcorder"`,l:'Flip Camcorder',ex:'Flip Video Camcorder'},
   ]}
 };
 const MAP_KEYS=['fresh','forgotten','ancient'];
 
+// ═══════════════════════════════════════
 // STATE
-let API_KEY='',isPoweredOn=true,isMuted=false,isLoading=false,currentVideoId=null;
-let osdTimeout,counterTimeout;
+// ═══════════════════════════════════════
+let API_KEY='',isPoweredOn=true,isLoading=false,currentVideoId=null;
+let osdTimeout,counterTimeout,volOsdTimeout;
 let playlist=[],playlistIdx=-1,playlistLabel='',playlistQuery='',playlistMapKey='';
-let activeMapKey=null;
-let ytPlayer=null,ytReady=false,skipTimer=null,volRotation=0;
 
+// Map lock: null = random
+let activeMapKey=null;
+// Freq lock: null = random, otherwise {mapKey, keyIdx}
+let lockedFreq=null;
+// Volume: 0-100
+let volume=100;
+
+let ytPlayer=null,ytReady=false,skipTimer=null;
+
+// Freq overlay
+let freqOpen=false, freqHighlight=-1;
+
+// ═══════════════════════════════════════
 // STATIC
+// ═══════════════════════════════════════
 const sCvs=document.getElementById('static-canvas'),sCtx=sCvs.getContext('2d');
 let sAnim=null;
 function resizeStatic(){const r=document.getElementById('screen').getBoundingClientRect();sCvs.width=Math.min(r.width,480);sCvs.height=Math.min(r.height,270);}
@@ -361,51 +454,105 @@ function drawStatic(){const w=sCvs.width,h=sCvs.height,img=sCtx.createImageData(
 function showStatic(){resizeStatic();document.getElementById('static-overlay').classList.add('active');if(!sAnim)drawStatic();}
 function hideStatic(){document.getElementById('static-overlay').classList.remove('active');if(sAnim){cancelAnimationFrame(sAnim);sAnim=null;}}
 
+// ═══════════════════════════════════════
 // UI
+// ═══════════════════════════════════════
 function flashOSD(n){const o=document.getElementById('channel-osd');document.getElementById('ch-num').textContent=(n||1).toString().padStart(2,'0');o.classList.add('visible');clearTimeout(osdTimeout);osdTimeout=setTimeout(()=>o.classList.remove('visible'),3000);}
 function showPlaylistCounter(){const c=document.getElementById('playlist-counter');c.textContent=`${playlistIdx+1} / ${playlist.length}`;c.classList.add('visible');clearTimeout(counterTimeout);counterTimeout=setTimeout(()=>c.classList.remove('visible'),3000);}
+function flashVolOSD(){
+  const o=document.getElementById('vol-osd');
+  const bars=Math.round(volume/10);
+  o.innerHTML=`VOL ${'█'.repeat(bars)}<span style="color:#222">${'█'.repeat(10-bars)}</span> ${volume}`;
+  o.classList.add('visible');clearTimeout(volOsdTimeout);volOsdTimeout=setTimeout(()=>o.classList.remove('visible'),2000);
+}
 function showStatus(m){const e=document.getElementById('status-msg');e.textContent=m;e.classList.add('visible');}
 function hideStatus(){document.getElementById('status-msg').classList.remove('visible');}
 function showError(m){const t=document.getElementById('error-toast');t.textContent=m;t.classList.add('visible');setTimeout(()=>t.classList.remove('visible'),4000);}
 
-// PERSISTENT INFO STRIP
-function updateInfoStrip(mapKey, keyphrase, title, channel, date){
+function updateInfoStrip(mapKey,keyphrase,title,channel,date){
   const badge=document.getElementById('info-map-badge');
-  badge.className='info-map-badge '+mapKey;
-  badge.textContent=MAPS[mapKey].name;
-
-  document.getElementById('info-keyphrase').textContent=`⟨${keyphrase}⟩`;
-  document.getElementById('info-keyphrase').style.color=
-    mapKey==='fresh'?'var(--crt-green)':mapKey==='forgotten'?'var(--crt-amber)':'var(--crt-red)';
-
+  badge.className='info-map-badge '+mapKey;badge.textContent=MAPS[mapKey].name;
+  const kp=document.getElementById('info-keyphrase');
+  kp.textContent=`⟨${keyphrase}⟩`;
+  kp.style.color=mapKey==='fresh'?'var(--crt-green)':mapKey==='forgotten'?'var(--crt-amber)':'var(--crt-red)';
   document.getElementById('info-title').textContent=title||'—';
   document.getElementById('info-meta').textContent=(channel||'')+(date?' · '+new Date(date).toLocaleDateString():'');
-
-  // YT link
   const link=document.getElementById('info-yt-link');
   if(currentVideoId){link.href=`https://www.youtube.com/watch?v=${currentVideoId}`;link.style.visibility='visible';}
 }
-
 function clearInfoStrip(){
-  const badge=document.getElementById('info-map-badge');
-  badge.className='info-map-badge idle';badge.textContent='—';
+  document.getElementById('info-map-badge').className='info-map-badge idle';
+  document.getElementById('info-map-badge').textContent='—';
   document.getElementById('info-keyphrase').textContent='WAITING FOR SIGNAL...';
   document.getElementById('info-keyphrase').style.color='#333';
   document.getElementById('info-title').textContent='—';
   document.getElementById('info-meta').textContent='—';
   document.getElementById('info-yt-link').style.visibility='hidden';
 }
-
+function updateFreqIndicator(){
+  const el=document.getElementById('info-freq');
+  if(lockedFreq){
+    const entry=MAPS[lockedFreq.mapKey].keys[lockedFreq.keyIdx];
+    el.textContent='🔒 '+entry.l;el.classList.add('locked');
+  }else{
+    el.textContent='🎲 RND';el.classList.remove('locked');
+  }
+}
 function updateMapButtons(){
   MAP_KEYS.forEach((mk,i)=>{const btn=document.getElementById(`map-btn-${i}`);if(activeMapKey===mk)btn.classList.add('active');else btn.classList.remove('active');});
 }
 
-// YT PLAYER API
+// ═══════════════════════════════════════
+// FREQUENCY SELECTOR
+// ═══════════════════════════════════════
+function buildFreqList(){
+  const list=document.getElementById('freq-list');list.innerHTML='';
+  // Random option
+  const rnd=document.createElement('div');rnd.className='freq-item freq-random'+(lockedFreq===null?' selected':'');
+  rnd.innerHTML='<div class="freq-dot"></div><div class="freq-item-label">🎲  FULL RANDOM</div><div class="freq-item-example">any map, any pattern</div>';
+  rnd.onclick=()=>{lockedFreq=null;updateFreqIndicator();closeFreq();showStatus('FREQ: RANDOM');setTimeout(hideStatus,1200);};
+  list.appendChild(rnd);
+
+  // Each map
+  MAP_KEYS.forEach(mk=>{
+    const map=MAPS[mk];
+    const div=document.createElement('div');div.className='freq-divider';
+    div.textContent=map.name;list.appendChild(div);
+    map.keys.forEach((entry,idx)=>{
+      const isSelected=lockedFreq&&lockedFreq.mapKey===mk&&lockedFreq.keyIdx===idx;
+      const item=document.createElement('div');
+      item.className='freq-item'+(isSelected?' selected':'');
+      item.innerHTML=`<div class="freq-dot"></div><div class="freq-item-label">${entry.l}</div><div class="freq-item-example">${entry.ex||''}</div>`;
+      item.onclick=()=>{
+        lockedFreq={mapKey:mk,keyIdx:idx};
+        // Auto-set map to match
+        activeMapKey=mk;updateMapButtons();
+        updateFreqIndicator();closeFreq();
+        showStatus('🔒 '+entry.l);setTimeout(hideStatus,1500);
+      };
+      list.appendChild(item);
+    });
+  });
+}
+function openFreq(){
+  if(!isPoweredOn)return;
+  buildFreqList();freqOpen=true;
+  document.getElementById('freq-overlay').classList.add('active');
+}
+function closeFreq(){
+  freqOpen=false;
+  document.getElementById('freq-overlay').classList.remove('active');
+}
+function toggleFreq(){if(freqOpen)closeFreq();else openFreq();}
+
+// ═══════════════════════════════════════
+// YOUTUBE PLAYER
+// ═══════════════════════════════════════
 function onYouTubeIframeAPIReady(){
   ytPlayer=new YT.Player('yt-player',{
     width:'100%',height:'100%',
-    playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,iv_load_policy:3,playsinline:1,fs:0,mute:isMuted?1:0},
-    events:{onReady:function(){ytReady=true;},onStateChange:onPlayerStateChange,onError:onPlayerError}
+    playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,iv_load_policy:3,playsinline:1,fs:0},
+    events:{onReady:function(){ytReady=true;ytPlayer.setVolume(volume);},onStateChange:onPlayerStateChange,onError:onPlayerError}
   });
 }
 function onPlayerStateChange(e){
@@ -419,12 +566,14 @@ function onPlayerError(e){
 }
 function loadVideoInPlayer(vidId){
   currentVideoId=vidId;
-  if(ytReady&&ytPlayer&&ytPlayer.loadVideoById){ytPlayer.loadVideoById({videoId:vidId});if(isMuted)ytPlayer.mute();else ytPlayer.unMute();}
+  if(ytReady&&ytPlayer&&ytPlayer.loadVideoById){ytPlayer.loadVideoById({videoId:vidId});ytPlayer.setVolume(volume);}
   clearTimeout(skipTimer);
   skipTimer=setTimeout(()=>{if(playlist.length>1){playlist.splice(playlistIdx,1);if(playlistIdx>=playlist.length)playlistIdx=0;playCurrent();}else doWarp();},8000);
 }
 
-// YT SEARCH
+// ═══════════════════════════════════════
+// SEARCH
+// ═══════════════════════════════════════
 async function ytSearch(query,order){
   const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(query)}&order=${order}&videoEmbeddable=true&key=${API_KEY}`;
   const r=await fetch(url);
@@ -437,57 +586,84 @@ async function ytSearch(query,order){
   return items;
 }
 
+// ═══════════════════════════════════════
 // PLAY
+// ═══════════════════════════════════════
 function playCurrent(){
   if(!playlist.length)return;
   playlistIdx=((playlistIdx%playlist.length)+playlist.length)%playlist.length;
   const v=playlist[playlistIdx];
   showStatic();showStatus('TUNING...');document.getElementById('yt-player-wrap').style.opacity='0';
   loadVideoInPlayer(v.id);
-  updateInfoStrip(playlistMapKey, `${playlistLabel} — ${playlistQuery.replace(/"/g,'')}`, v.title, v.channel, v.date);
+  updateInfoStrip(playlistMapKey,`${playlistLabel} — ${playlistQuery.replace(/"/g,'')}`,v.title,v.channel,v.date);
   setTimeout(()=>{flashOSD(playlistIdx+1);showPlaylistCounter();},400);
 }
 
-// WARP
+// ═══════════════════════════════════════
+// WARP — new query respecting locks
+// ═══════════════════════════════════════
 async function doWarp(){
   if(isLoading||!isPoweredOn)return;
   isLoading=true;clearTimeout(skipTimer);
   const scr=document.getElementById('screen');scr.classList.remove('warping');void scr.offsetWidth;scr.classList.add('warping');
   showStatic();showStatus('⌁ WARPING...');document.getElementById('yt-player-wrap').style.opacity='0';
-  let mk=activeMapKey||pick(MAP_KEYS);const map=MAPS[mk];
+
+  // Determine map
+  let mk;
+  if(lockedFreq) mk=lockedFreq.mapKey;
+  else if(activeMapKey) mk=activeMapKey;
+  else mk=pick(MAP_KEYS);
+  const map=MAPS[mk];
+
   for(let attempt=0;attempt<3;attempt++){
-    const entry=pick(map.keys);const query=entry.q();
+    // Determine keyphrase entry
+    let entry;
+    if(lockedFreq&&lockedFreq.mapKey===mk) entry=map.keys[lockedFreq.keyIdx];
+    else entry=pick(map.keys);
+    const query=entry.q(); // Regenerates random numbers each time
+
     try{
       const results=await ytSearch(query,map.order);
-      if(results.length>0){playlist=shuffle(results);playlistIdx=0;playlistLabel=entry.l;playlistQuery=query;playlistMapKey=mk;playCurrent();isLoading=false;return;}
+      if(results.length>0){
+        playlist=shuffle(results);playlistIdx=0;
+        playlistLabel=entry.l;playlistQuery=query;playlistMapKey=mk;
+        playCurrent();isLoading=false;return;
+      }
     }catch(err){if(err.message.includes('403'))break;}
   }
   hideStatic();showStatus('NO SIGNAL — PRESS D');setTimeout(()=>{hideStatus();showStatic();},2500);isLoading=false;
 }
 
-// MAP
+// ═══════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════
 function setMap(idx){
   if(!isPoweredOn)return;
   const mk=MAP_KEYS[idx];
-  if(activeMapKey===mk)activeMapKey=null;else activeMapKey=mk;
+  if(activeMapKey===mk){activeMapKey=null;if(lockedFreq&&lockedFreq.mapKey===mk){lockedFreq=null;updateFreqIndicator();}}
+  else{activeMapKey=mk;}
   updateMapButtons();
   showStatus(activeMapKey?MAPS[activeMapKey].name:'MAP: RANDOM');setTimeout(hideStatus,1200);
 }
 
-// CH
-function chUp(){if(!isPoweredOn)return;if(!playlist.length){doWarp();return;}playlistIdx++;if(playlistIdx>=playlist.length){doWarp();return;}playCurrent();}
-function chDown(){if(!isPoweredOn)return;if(!playlist.length){doWarp();return;}playlistIdx--;if(playlistIdx<0)playlistIdx=playlist.length-1;playCurrent();}
+function chUp(){if(!isPoweredOn||freqOpen)return;if(!playlist.length){doWarp();return;}playlistIdx++;if(playlistIdx>=playlist.length){doWarp();return;}playCurrent();}
+function chDown(){if(!isPoweredOn||freqOpen)return;if(!playlist.length){doWarp();return;}playlistIdx--;if(playlistIdx<0)playlistIdx=playlist.length-1;playCurrent();}
 
-// POWER/MUTE
+function setVolume(v){
+  volume=Math.max(0,Math.min(100,v));
+  if(ytReady&&ytPlayer){ytPlayer.setVolume(volume);if(volume===0)ytPlayer.mute();else ytPlayer.unMute();}
+  document.getElementById('knob-vol').style.transform=`rotate(${(volume/100)*270-135}deg)`;
+  flashVolOSD();
+}
+
 function togglePower(){
   if(isPoweredOn){
-    isPoweredOn=false;clearTimeout(skipTimer);
+    isPoweredOn=false;clearTimeout(skipTimer);closeFreq();
     document.getElementById('power-led').classList.remove('on');
     document.getElementById('power-off-screen').classList.add('active');
     hideStatic();hideStatus();
-    ['channel-osd','playlist-counter'].forEach(id=>document.getElementById(id).classList.remove('visible'));
-    if(ytReady&&ytPlayer)ytPlayer.stopVideo();
-    clearInfoStrip();
+    ['channel-osd','playlist-counter','vol-osd'].forEach(id=>document.getElementById(id).classList.remove('visible'));
+    if(ytReady&&ytPlayer)ytPlayer.stopVideo();clearInfoStrip();
   }else{
     isPoweredOn=true;
     document.getElementById('power-led').classList.add('on');
@@ -495,14 +671,10 @@ function togglePower(){
     showStatic();setTimeout(()=>doWarp(),600);
   }
 }
-function toggleMute(){
-  isMuted=!isMuted;
-  if(ytReady&&ytPlayer){if(isMuted)ytPlayer.mute();else ytPlayer.unMute();}
-  volRotation+=30;document.getElementById('knob-vol').style.transform=`rotate(${volRotation}deg)`;
-  showStatus(isMuted?'MUTED':'UNMUTED');setTimeout(hideStatus,1200);
-}
 
+// ═══════════════════════════════════════
 // SETUP
+// ═══════════════════════════════════════
 function startApp(){
   const key=document.getElementById('api-key-input').value.trim();
   if(!key){document.getElementById('setup-error').textContent='Paste your API key above';document.getElementById('setup-error').classList.add('visible');return;}
@@ -512,37 +684,58 @@ function startApp(){
     .then(()=>{
       const s=document.getElementById('setup-screen');s.classList.add('hidden');
       setTimeout(()=>{s.style.display='none';document.getElementById('main-container').classList.add('active');resizeStatic();showStatic();
+        setVolume(100);
         function go(){if(ytReady)doWarp();else setTimeout(go,200);}setTimeout(go,600);
       },800);
     })
     .catch(()=>{document.getElementById('go-btn').textContent='TUNE IN';document.getElementById('setup-error').textContent='Key didn\'t work. Check that YouTube Data API v3 is enabled.';document.getElementById('setup-error').classList.add('visible');});
 }
 
+// ═══════════════════════════════════════
 // EVENTS
+// ═══════════════════════════════════════
 document.getElementById('go-btn').addEventListener('click',startApp);
 document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')startApp();});
+
 document.addEventListener('keydown',e=>{
   const s=document.getElementById('setup-screen');
   if(s.style.display!=='none'&&!s.classList.contains('hidden'))return;
+
+  // Freq overlay eats some keys
+  if(freqOpen){
+    if(e.key==='Escape'||e.key==='f'||e.key==='F'){e.preventDefault();closeFreq();return;}
+    return; // Let clicks handle selection
+  }
+
   switch(e.key){
     case'ArrowUp':case'w':case'W':e.preventDefault();chUp();break;
     case'ArrowDown':case's':case'S':e.preventDefault();chDown();break;
     case'd':case'D':doWarp();break;
     case'1':setMap(0);break;case'2':setMap(1);break;case'3':setMap(2);break;
+    case'f':case'F':toggleFreq();break;
+    case'm':case'M':setVolume(volume>0?0:100);break;
     case'p':case'P':togglePower();break;
-
-    case'm':case'M':toggleMute();break;
   }
 });
+
+// Volume scroll on knob
+document.getElementById('knob-vol').addEventListener('wheel',e=>{
+  e.preventDefault();setVolume(volume+(e.deltaY<0?10:-10));
+},{passive:false});
+// Click knob cycles: 100→75→50→25→0→100
+document.getElementById('knob-vol').addEventListener('click',()=>{
+  if(volume>75)setVolume(75);else if(volume>50)setVolume(50);else if(volume>25)setVolume(25);else if(volume>0)setVolume(0);else setVolume(100);
+});
+
 document.getElementById('ch-up').addEventListener('click',chUp);
 document.getElementById('ch-down').addEventListener('click',chDown);
-document.getElementById('warp-btn').addEventListener('click',()=>doWarp());
+document.getElementById('warp-btn').addEventListener('click',()=>{if(!freqOpen)doWarp();});
 document.getElementById('pwr-btn').addEventListener('click',togglePower);
 document.getElementById('power-off-screen').addEventListener('click',togglePower);
-document.getElementById('knob-vol').addEventListener('click',toggleMute);
 document.getElementById('map-btn-0').addEventListener('click',()=>setMap(0));
 document.getElementById('map-btn-1').addEventListener('click',()=>setMap(1));
 document.getElementById('map-btn-2').addEventListener('click',()=>setMap(2));
+document.getElementById('info-freq').addEventListener('click',toggleFreq);
 window.addEventListener('resize',()=>{if(sAnim)resizeStatic();});
 </script>
 </body>
