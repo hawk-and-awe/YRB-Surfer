@@ -493,7 +493,13 @@ function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function pad(n,l){return n.toString().padStart(l,'0');}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function dateFmt(yMin,yMax){const y=yMax?rand(yMin,yMax):new Date().getFullYear();return`${y}${pad(rand(1,12),2)}${pad(rand(1,28),2)}`;}
+function dateFmt(yMin,yMax){
+  const now=new Date();const cy=now.getFullYear(),cm=now.getMonth()+1,cd=now.getDate();
+  if(yMax){const y=rand(yMin,Math.min(yMax,cy));const mMax=(y===cy)?cm:12;const m=rand(1,mMax);const dMax=(y===cy&&m===cm)?cd:28;return`${y}${pad(m,2)}${pad(rand(1,dMax),2)}`;}
+  // No range = recent dates within past 2 years
+  const past=new Date(now);past.setMonth(past.getMonth()-rand(0,24));
+  return`${past.getFullYear()}${pad(past.getMonth()+1,2)}${pad(rand(1,Math.min(28,past.getDate()||28)),2)}`;
+}
 const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
 
 // ═══════════════════════════════════════
@@ -662,7 +668,7 @@ function buildFreqList(){
   // Random option
   const rnd=document.createElement('div');rnd.className='freq-item freq-random'+(lockedFreq===null?' selected':'');
   rnd.innerHTML='<div class="freq-dot"></div><div class="freq-item-label">🎲  FULL RANDOM</div><div class="freq-item-example">any map, any pattern</div>';
-  rnd.onclick=()=>{lockedFreq=null;updateFreqIndicator();closeFreq();showStatus('FREQ: RANDOM');setTimeout(hideStatus,1200);};
+  rnd.onclick=()=>{lockedFreq=null;updateFreqIndicator();closeFreq();doWarp();};
   list.appendChild(rnd);
 
   // Each map
@@ -677,10 +683,9 @@ function buildFreqList(){
       item.innerHTML=`<div class="freq-dot"></div><div class="freq-item-label">${entry.l}</div><div class="freq-item-example">${entry.ex||''}</div>`;
       item.onclick=()=>{
         lockedFreq={mapKey:mk,keyIdx:idx};
-        // Auto-set map to match
         activeMapKey=mk;updateMapButtons();
         updateFreqIndicator();closeFreq();
-        showStatus('🔒 '+entry.l);setTimeout(hideStatus,1500);
+        doWarp(); // Immediately search with locked freq
       };
       list.appendChild(item);
     });
@@ -790,12 +795,18 @@ async function doWarp(){
 // CONTROLS
 // ═══════════════════════════════════════
 function setMap(idx){
-  if(!isPoweredOn)return;
+  if(!isPoweredOn||isLoading)return;
   const mk=MAP_KEYS[idx];
-  if(activeMapKey===mk){activeMapKey=null;if(lockedFreq&&lockedFreq.mapKey===mk){lockedFreq=null;updateFreqIndicator();}}
-  else{activeMapKey=mk;}
-  updateMapButtons();
-  showStatus(activeMapKey?MAPS[activeMapKey].name:'MAP: RANDOM');setTimeout(hideStatus,1200);
+  if(activeMapKey===mk){
+    // Toggle off — go random
+    activeMapKey=null;lockedFreq=null;updateFreqIndicator();
+    updateMapButtons();showStatus('MAP: RANDOM');setTimeout(hideStatus,1200);
+  }else{
+    // Switch map — clear any freq lock (keyphrases are map-specific)
+    activeMapKey=mk;lockedFreq=null;updateFreqIndicator();
+    updateMapButtons();
+    doWarp(); // Immediately warp into the new map
+  }
 }
 
 function chUp(){if(!isPoweredOn||freqOpen)return;if(!playlist.length){doWarp();return;}playlistIdx++;if(playlistIdx>=playlist.length){doWarp();return;}playCurrent();}
