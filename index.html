@@ -8,8 +8,8 @@
   @import url('https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
   :root{--crt-green:#39ff14;--crt-amber:#ffb000;--crt-blue:#00d4ff;--crt-red:#ff6b6b;--bg-dark:#0a0a0a;--tv-body:#2a2118;--tv-body-light:#3d3127;}
   *{margin:0;padding:0;box-sizing:border-box;}
-  html,body{height:100%;overflow:hidden;}
-  body{background:var(--bg-dark);font-family:'VT323',monospace;color:var(--crt-green);display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;}
+  html,body{height:100%;overflow-x:hidden;overflow-y:auto;}
+  body{background:var(--bg-dark);font-family:'VT323',monospace;color:var(--crt-green);display:flex;flex-direction:column;align-items:center;min-height:100vh;padding-bottom:2rem;}
   body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(57,255,20,0.015) 2px,rgba(57,255,20,0.015) 4px),radial-gradient(ellipse at 50% 50%,#111,#050505);z-index:0;}
   .page-vignette{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,0.6) 100%);pointer-events:none;z-index:0;}
 
@@ -23,8 +23,8 @@
   #file-warning .small a{color:var(--crt-blue);}
 
   /* SETUP */
-  #setup-screen{position:fixed;inset:0;z-index:9999;background:#050505;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;transition:opacity 0.8s ease;}
-  #setup-screen.hidden{opacity:0;pointer-events:none;}
+  #setup-screen{z-index:1;background:var(--bg-dark);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;flex:1;width:100%;min-height:60vh;transition:opacity 0.8s ease;}
+  #setup-screen.hidden{opacity:0;pointer-events:none;position:absolute;height:0;min-height:0;overflow:hidden;padding:0;}
   #setup-screen h1{font-family:'Press Start 2P',monospace;font-size:clamp(0.65rem,2.5vw,1.1rem);color:var(--crt-green);text-shadow:0 0 10px var(--crt-green),0 0 30px rgba(57,255,20,0.3);margin-bottom:0.4rem;text-align:center;line-height:1.8;}
   .setup-subtitle{font-family:'VT323',monospace;font-size:clamp(1rem,3vw,1.5rem);color:var(--crt-amber);text-shadow:0 0 8px rgba(255,176,0,0.4);margin-bottom:1.5rem;text-align:center;opacity:0.8;}
   .setup-box{width:100%;max-width:560px;display:flex;flex-direction:column;align-items:center;gap:1rem;}
@@ -42,7 +42,7 @@
   .setup-error.visible{display:block;}
 
   /* MAIN */
-  #main-container{display:none;flex-direction:column;align-items:center;z-index:1;width:100%;height:100%;padding:1rem;}
+  #main-container{display:none;flex-direction:column;align-items:center;z-index:1;width:100%;flex:1;padding:1rem;}
   #main-container.active{display:flex;}
 
   /* TV */
@@ -225,6 +225,66 @@
   .screen-container.flicker{animation:flicker 4s infinite;}
   @keyframes warp-flash{0%{box-shadow:inset 0 0 0 rgba(255,170,0,0);}20%{box-shadow:inset 0 0 60px rgba(255,170,0,0.3);}100%{box-shadow:inset 0 0 0 rgba(255,170,0,0);}}
   .screen-container.warping{animation:warp-flash 0.6s ease !important;}
+
+  /* ═══ BOTTOM PANELS ═══ */
+  .bottom-nav{
+    display:flex;gap:0;width:min(95vw,900px);margin-top:0.3rem;z-index:1;
+  }
+  .bottom-nav-btn{
+    flex:1;padding:clamp(5px,1vw,8px) 0;
+    background:rgba(255,255,255,0.02);border:1px solid #1a1a1a;
+    font-family:'Press Start 2P',monospace;font-size:clamp(0.22rem,0.65vw,0.35rem);
+    color:#444;letter-spacing:2px;text-transform:uppercase;
+    cursor:pointer;transition:all 0.2s;text-align:center;
+  }
+  .bottom-nav-btn:first-child{border-radius:0 0 0 6px;}
+  .bottom-nav-btn:last-child{border-radius:0 0 6px 0;}
+  .bottom-nav-btn:hover{color:#777;background:rgba(255,255,255,0.04);border-color:#333;}
+  .bottom-nav-btn.active{color:var(--crt-green);border-color:rgba(57,255,20,0.2);background:rgba(57,255,20,0.03);}
+
+  .bottom-panel{
+    display:none;width:min(95vw,900px);z-index:1;
+    background:rgba(10,10,10,0.95);border:1px solid #1a1a1a;border-top:none;
+    border-radius:0 0 8px 8px;
+    padding:clamp(12px,3vw,28px);
+    max-height:60vh;overflow-y:auto;
+    scrollbar-width:thin;scrollbar-color:#333 transparent;
+  }
+  .bottom-panel::-webkit-scrollbar{width:4px;}
+  .bottom-panel::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
+  .bottom-panel.active{display:block;}
+
+  .panel-h{font-family:'Press Start 2P',monospace;font-size:clamp(0.35rem,1vw,0.55rem);color:var(--crt-amber);letter-spacing:2px;margin:clamp(10px,2vw,18px) 0 clamp(6px,1vw,10px);text-shadow:0 0 8px rgba(255,176,0,0.2);}
+  .panel-h:first-child{margin-top:0;}
+  .panel-p{font-family:'VT323',monospace;font-size:clamp(0.85rem,2vw,1.15rem);color:#888;line-height:1.6;margin-bottom:0.6rem;}
+  .panel-p a{color:var(--crt-blue);text-decoration:none;}
+  .panel-p a:hover{text-decoration:underline;}
+  .panel-p strong{color:#bbb;}
+
+  .panel-controls-grid{display:grid;grid-template-columns:auto 1fr;gap:4px clamp(8px,2vw,16px);align-items:baseline;margin:0.5rem 0;}
+  .panel-key{font-family:'Share Tech Mono',monospace;font-size:clamp(0.5rem,1.2vw,0.7rem);color:var(--crt-green);text-shadow:0 0 4px rgba(57,255,20,0.2);white-space:nowrap;}
+  .panel-desc{font-family:'VT323',monospace;font-size:clamp(0.8rem,1.8vw,1.05rem);color:#777;line-height:1.4;}
+
+  .map-card{
+    background:rgba(255,255,255,0.02);border:1px solid #1a1a1a;border-radius:4px;
+    padding:clamp(8px,1.5vw,14px);margin-bottom:clamp(6px,1vw,10px);
+  }
+  .map-card-title{font-family:'Press Start 2P',monospace;font-size:clamp(0.22rem,0.6vw,0.35rem);letter-spacing:2px;margin-bottom:4px;}
+  .map-card-title.mc-fresh{color:var(--crt-green);}
+  .map-card-title.mc-forgot{color:var(--crt-amber);}
+  .map-card-title.mc-ancient{color:var(--crt-red);}
+  .map-card p{font-family:'VT323',monospace;font-size:clamp(0.8rem,1.8vw,1.05rem);color:#777;line-height:1.5;}
+  .map-card .map-examples{font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);color:#444;margin-top:4px;letter-spacing:1px;line-height:1.6;}
+
+  .credit-block{display:flex;gap:clamp(8px,2vw,16px);align-items:flex-start;margin-bottom:clamp(8px,1.5vw,14px);}
+  .credit-icon{font-size:clamp(1rem,2.5vw,1.5rem);flex-shrink:0;line-height:1;}
+  .credit-text{flex:1;}
+  .credit-text .credit-name{font-family:'Press Start 2P',monospace;font-size:clamp(0.25rem,0.7vw,0.38rem);color:var(--crt-green);letter-spacing:1px;margin-bottom:2px;}
+  .credit-text .credit-role{font-family:'VT323',monospace;font-size:clamp(0.8rem,1.8vw,1.05rem);color:#777;line-height:1.4;}
+  .credit-text a{color:var(--crt-blue);text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);}
+  .credit-text a:hover{text-decoration:underline;}
+
+  .panel-divider{border:none;border-top:1px solid #1a1a1a;margin:clamp(8px,2vw,16px) 0;}
 </style>
 </head>
 <body>
@@ -253,7 +313,7 @@
     <p><span class="step-num">2.</span> Click <strong style="color:#aaa;">+ CREATE CREDENTIALS</strong> → <strong style="color:#aaa;">API key</strong></p>
     <p><span class="step-num">3.</span> Make sure <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank">YouTube Data API v3</a> is enabled</p>
     <p><span class="step-num">4.</span> Paste the key above</p>
-    <div class="note">Free tier ≈ 100 searches/day.</div>
+    <div class="note">Free tier = 10,000 units/day ≈ 99 warps (each warp = 101 units).</div>
   </div>
 </div>
 
@@ -328,7 +388,99 @@
     <div class="tagline">exploring youtube's video graveyard — one channel at a time</div>
     <div class="hotkeys"><span>↑↓</span> SURF &nbsp; <span>D</span> WARP &nbsp; <span>1 2 3</span> MAP &nbsp; <span>F</span> FREQ &nbsp; <span>M/scroll</span> VOL &nbsp; <span>P</span> POWER</div>
   </div>
-</div>
+
+  <!-- TAB NAV -->
+  <div class="bottom-nav">
+    <button class="bottom-nav-btn" data-panel="panel-about">ABOUT</button>
+    <button class="bottom-nav-btn" data-panel="panel-howto">HOW TO</button>
+    <button class="bottom-nav-btn" data-panel="panel-credits">CREDITS</button>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="bottom-panel" id="panel-about">
+    <div class="panel-h">WHAT IS THIS?</div>
+    <div class="panel-p">THE GRAVEYARD is a tool for surfing YouTube's hidden underbelly — the millions of videos uploaded with default filenames, zero views, and no intention of ever being found. Think of it as channel surfing through the internet's junk drawer.</div>
+    <div class="panel-p">Every day, people accidentally upload videos straight from their cameras and phones with names like <strong>IMG_4293.MOV</strong> or <strong>GOPR0847</strong>. These videos don't get titles, descriptions, or tags. They sit in YouTube's database forever, unseen — until now.</div>
+
+    <div class="panel-h">WHY DOES IT EXIST?</div>
+    <div class="panel-p">There's something fascinating about unfiltered, unedited glimpses into other people's lives. A dashcam in rural Russia. A kid's first Minecraft recording. A family barbecue from 2009 shot on a Flip camcorder. Someone's cat, uploaded from a flip phone via picture mail in 2007.</div>
+    <div class="panel-p">These aren't content — they're artifacts. THE GRAVEYARD lets you discover them the way you'd discover something flipping through channels at 2 AM. No algorithm. No recommendations. Just raw, accidental humanity.</div>
+
+    <div class="panel-h">HOW DOES IT WORK?</div>
+    <div class="panel-p">The surfer uses the <strong>YouTube Recycle Bin</strong> methodology — searching for default camera filenames, auto-generated titles, and forgotten upload patterns to find videos nobody was ever meant to see. Each search generates random parameters (like <strong>DSCF</strong> + a random 4-digit number) to keep results unpredictable.</div>
+    <div class="panel-p">Results are verified for embedding, shuffled for variety, and served to you through a retro CRT TV interface. Videos that can't play are automatically skipped.</div>
+  </div>
+
+  <!-- HOW TO -->
+  <div class="bottom-panel" id="panel-howto">
+    <div class="panel-h">CONTROLS</div>
+    <div class="panel-controls-grid">
+      <div class="panel-key">CH ▲ / ▼</div><div class="panel-desc">Surf through videos in the current playlist. When you reach the end, it auto-warps to a new query.</div>
+      <div class="panel-key">↑ ↓ or W S</div><div class="panel-desc">Keyboard shortcuts for channel up/down.</div>
+      <div class="panel-key">⌁ WARP (D)</div><div class="panel-desc">Generate a brand new random search query from the active map. This is your main discovery tool — every warp pulls completely different videos.</div>
+      <div class="panel-key">FRESH / FORGOT / ANCIENT (1 2 3)</div><div class="panel-desc">Lock to a specific map. The button glows when active. Takes effect on next WARP. Press again to unlock (returns to random map selection).</div>
+      <div class="panel-key">FREQ LOCK (F)</div><div class="panel-desc">Open the frequency selector to lock to a specific keyphrase pattern (like only GoPro videos, or only Flip Camcorder relics). WARP will generate new random numbers for that pattern each time. Select "FULL RANDOM" to unlock.</div>
+      <div class="panel-key">VOL (M / scroll)</div><div class="panel-desc">Click the knob to cycle volume (100→75→50→25→0). Scroll wheel for fine control. M key toggles mute.</div>
+      <div class="panel-key">POWER (P)</div><div class="panel-desc">Turn the TV on or off.</div>
+      <div class="panel-key">🎲 RND / 🔒</div><div class="panel-desc">The frequency indicator in the info strip. Click it to open the frequency selector. Shows the current lock status.</div>
+      <div class="panel-key">▶ YT Link</div><div class="panel-desc">Opens the current video directly on YouTube in a new tab.</div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <div class="panel-h">THE THREE MAPS</div>
+
+    <div class="map-card">
+      <div class="map-card-title mc-fresh">MAP 1 — FRESH</div>
+      <p>Recent uploads with smartphone and app-generated filenames. Sorted by <strong>date</strong> (newest first) — catches videos uploaded hours or days ago. This map is closest to a live feed of accidental uploads.</p>
+      <div class="map-examples">IMG · MVI · PXL · VID · WIN · InShot · WhatsApp Video · FullSizeRender · RPReplay · My Movie · Bandicam · Javaw · Robloxapp · VLC Record · YouCut · Capture · .MP4 · .MOV · .AVI · .3gp · VTS 01</div>
+    </div>
+
+    <div class="map-card">
+      <div class="map-card-title mc-forgot">MAP 2 — FORGOTTEN</div>
+      <p>Camera dumps and device footage from 2008–2023 that never found an audience. Sorted by <strong>view count</strong> (lowest first) — surfaces the true zero-view graveyard. This is where you find dashcam footage, bodycam clips, and decade-old camera tests.</p>
+      <div class="map-examples">DSC · DSCF · DSCN · GOPR · GH01 · DJI · SAM · FILE · MAH0 · MOV0 · M2U0 · SANY · HPIM · SDC1 · GEDC · AMBA · SUNP · REC · DSCI · Axon Body · Sprint PictureMail · AVSEQ · Flipagram · Bandicam (Old) · Android Upload · копия видео</div>
+    </div>
+
+    <div class="map-card">
+      <div class="map-card-title mc-ancient">MAP 3 — ANCIENT</div>
+      <p>Early YouTube relics from 2006–2010. Flip phone videos, picture mail, MMS uploads. Sorted by <strong>view count</strong>. This is YouTube archaeology — the deepest, strangest layer of the platform.</p>
+      <div class="map-examples">Picture Mail · Media1.3gp · Media1.3g2 · Video.3g2 · Multimedia Message · Video from my phone · Mobile Upload · My Great Movie · My First Project · Vídeo desde mi teléfono · muuvee · 0_VIDEO · Flip Video Camcorder</div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <div class="panel-h">API KEY</div>
+    <div class="panel-p">You need a free YouTube Data API v3 key from <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a>. The free tier gives you <strong>10,000 units per day</strong>. A search costs 100 units and the embed verification costs 1 unit, so each WARP uses 101 units — roughly <strong>99 warps per day</strong>. Channel surfing within results uses zero additional quota.</div>
+  </div>
+
+  <!-- CREDITS -->
+  <div class="bottom-panel" id="panel-credits">
+    <div class="panel-h">CREDITS & THANKS</div>
+
+    <div class="credit-block">
+      <div class="credit-icon">📼</div>
+      <div class="credit-text">
+        <div class="credit-name">KVN AUST</div>
+        <div class="credit-role">Creator of the <strong>YouTube Recycle Bin</strong> methodology — the keyphrase maps, search patterns, and discovery techniques that make this tool possible. His research into YouTube's forgotten corners is the foundation everything here is built on.</div>
+        <a href="https://www.youtube.com/@KVNAUST" target="_blank">youtube.com/@KVNAUST</a>
+      </div>
+    </div>
+
+    <div class="credit-block">
+      <div class="credit-icon">📄</div>
+      <div class="credit-text">
+        <div class="credit-name">THE ORIGINAL DOCUMENT</div>
+        <div class="credit-role">KVN AUST's comprehensive guide to the YouTube Recycle Bin methodology — the source material for all three keyphrase maps used in this surfer.</div>
+        <a href="https://docs.google.com/document/d/19cPH_LDXj6jjLUPPKn1OITJ0jJx3MrJIm9B7fUqaJD8/" target="_blank">YouTube Recycle Bin — Google Doc</a>
+      </div>
+    </div>
+
+    <hr class="panel-divider">
+
+    <div class="panel-p" style="color:#444;font-size:clamp(0.7rem,1.5vw,0.9rem);">THE GRAVEYARD is a free, open-source tool. No data is collected. No tracking. All API calls happen client-side in your browser. Your API key never leaves your machine.</div>
+  </div>
+</div><!-- /main-container -->
 
 <div id="error-toast"></div>
 <script src="https://www.youtube.com/iframe_api"></script>
@@ -737,6 +889,23 @@ document.getElementById('map-btn-1').addEventListener('click',()=>setMap(1));
 document.getElementById('map-btn-2').addEventListener('click',()=>setMap(2));
 document.getElementById('info-freq').addEventListener('click',toggleFreq);
 window.addEventListener('resize',()=>{if(sAnim)resizeStatic();});
+
+// Bottom panel tabs
+document.querySelectorAll('.bottom-nav-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const target=btn.dataset.panel;
+    const isActive=btn.classList.contains('active');
+    // Close all
+    document.querySelectorAll('.bottom-nav-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.bottom-panel').forEach(p=>p.classList.remove('active'));
+    // Toggle
+    if(!isActive){
+      btn.classList.add('active');
+      document.getElementById(target).classList.add('active');
+      setTimeout(()=>document.getElementById(target).scrollIntoView({behavior:'smooth',block:'nearest'}),50);
+    }
+  });
+});
 </script>
 </body>
 </html>
