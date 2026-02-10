@@ -31,8 +31,13 @@
   .setup-box input{width:100%;padding:0.8rem 1rem;background:#111;border:1px solid #333;color:var(--crt-green);font-family:'Share Tech Mono',monospace;font-size:1rem;outline:none;letter-spacing:1px;}
   .setup-box input:focus{border-color:var(--crt-green);box-shadow:0 0 10px rgba(57,255,20,0.2);}
   .setup-box input::placeholder{color:#444;}
-  .setup-box button{padding:0.7rem 2.5rem;background:transparent;border:1px solid var(--crt-green);color:var(--crt-green);font-family:'Press Start 2P',monospace;font-size:0.6rem;cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:all 0.2s;}
-  .setup-box button:hover{background:var(--crt-green);color:#000;box-shadow:0 0 20px rgba(57,255,20,0.4);}
+  .setup-btn{padding:0.7rem 2.5rem;background:transparent;border:1px solid var(--crt-green);color:var(--crt-green);font-family:'Press Start 2P',monospace;font-size:0.6rem;cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:all 0.2s;width:auto;}
+  .setup-btn:hover{background:var(--crt-green);color:#000;box-shadow:0 0 20px rgba(57,255,20,0.4);}
+  .setup-divider{display:flex;align-items:center;gap:1rem;width:100%;margin:0.5rem 0;}
+  .setup-divider::before,.setup-divider::after{content:'';flex:1;height:1px;background:#222;}
+  .setup-divider span{font-family:'VT323',monospace;color:#444;font-size:1rem;}
+  .setup-free-btn{padding:0.7rem 2.5rem;background:transparent;border:1px solid var(--crt-amber);color:var(--crt-amber);font-family:'Press Start 2P',monospace;font-size:0.5rem;cursor:pointer;text-transform:uppercase;letter-spacing:2px;transition:all 0.2s;line-height:1.6;}
+  .setup-free-btn:hover{background:var(--crt-amber);color:#000;box-shadow:0 0 20px rgba(255,176,0,0.4);}
   .setup-steps{max-width:560px;margin-top:1.5rem;font-family:'VT323',monospace;font-size:1.1rem;color:#666;line-height:1.8;text-align:left;}
   .setup-steps .step-num{color:var(--crt-green);}
   .setup-steps a{color:var(--crt-blue);text-decoration:none;}
@@ -40,6 +45,10 @@
   .setup-steps .note{font-size:0.9rem;color:#444;margin-top:0.5rem;border-left:2px solid #333;padding-left:0.8rem;}
   .setup-error{font-family:'Share Tech Mono',monospace;font-size:0.85rem;color:#ff4444;margin-top:0.5rem;display:none;}
   .setup-error.visible{display:block;}
+  .mode-badge{position:fixed;top:8px;right:12px;z-index:50;font-family:'Share Tech Mono',monospace;font-size:0.55rem;letter-spacing:1px;padding:3px 8px;border-radius:3px;border:1px solid #222;background:rgba(0,0,0,0.6);cursor:pointer;transition:all 0.2s;}
+  .mode-badge:hover{border-color:#555;}
+  .mode-badge.free{color:var(--crt-amber);border-color:rgba(255,176,0,0.2);}
+  .mode-badge.api{color:var(--crt-green);border-color:rgba(57,255,20,0.2);}
 
   /* MAIN */
   #main-container{display:none;flex-direction:column;align-items:center;z-index:1;width:100%;flex:1;padding:1rem 1rem 0;}
@@ -109,26 +118,51 @@
   .map-btn .map-btn-name{font-family:'Press Start 2P',monospace;font-size:clamp(0.3rem,0.9vw,0.5rem);letter-spacing:2px;transition:color 0.2s;}
   .map-btn .map-btn-desc{font-family:'VT323',monospace;font-size:clamp(0.6rem,1.3vw,0.85rem);color:#444;line-height:1.3;max-height:0;overflow:hidden;transition:max-height 0.3s,color 0.2s,margin 0.3s;margin-top:0;}
   .map-btn.active .map-btn-desc,.map-btn:hover .map-btn-desc{max-height:3em;margin-top:4px;}
-  .map-btn.m-fresh .map-btn-name{color:#2a6618;}
-  .map-btn.m-fresh:hover .map-btn-name,.map-btn.m-fresh.active .map-btn-name{color:var(--crt-green);}
-  .map-btn.m-fresh.active{border-color:rgba(57,255,20,0.3);background:rgba(57,255,20,0.05);box-shadow:0 0 12px rgba(57,255,20,0.1);}
-  .map-btn.m-fresh:hover .map-btn-desc,.map-btn.m-fresh.active .map-btn-desc{color:rgba(57,255,20,0.5);}
-  .map-btn.m-forgot .map-btn-name{color:#6b4800;}
-  .map-btn.m-forgot:hover .map-btn-name,.map-btn.m-forgot.active .map-btn-name{color:var(--crt-amber);}
-  .map-btn.m-forgot.active{border-color:rgba(255,176,0,0.3);background:rgba(255,176,0,0.05);box-shadow:0 0 12px rgba(255,176,0,0.1);}
-  .map-btn.m-forgot:hover .map-btn-desc,.map-btn.m-forgot.active .map-btn-desc{color:rgba(255,176,0,0.5);}
-  .map-btn.m-ancient .map-btn-name{color:#6b2020;}
-  .map-btn.m-ancient:hover .map-btn-name,.map-btn.m-ancient.active .map-btn-name{color:var(--crt-red);}
-  .map-btn.m-ancient.active{border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.05);box-shadow:0 0 12px rgba(255,107,107,0.1);}
-  .map-btn.m-ancient:hover .map-btn-desc,.map-btn.m-ancient.active .map-btn-desc{color:rgba(255,107,107,0.5);}
+  .map-btn.m-fresh .map-btn-name{color:#2a6618;}.map-btn.m-fresh:hover .map-btn-name,.map-btn.m-fresh.active .map-btn-name{color:var(--crt-green);}.map-btn.m-fresh.active{border-color:rgba(57,255,20,0.3);background:rgba(57,255,20,0.05);box-shadow:0 0 12px rgba(57,255,20,0.1);}.map-btn.m-fresh:hover .map-btn-desc,.map-btn.m-fresh.active .map-btn-desc{color:rgba(57,255,20,0.5);}
+  .map-btn.m-forgot .map-btn-name{color:#6b4800;}.map-btn.m-forgot:hover .map-btn-name,.map-btn.m-forgot.active .map-btn-name{color:var(--crt-amber);}.map-btn.m-forgot.active{border-color:rgba(255,176,0,0.3);background:rgba(255,176,0,0.05);box-shadow:0 0 12px rgba(255,176,0,0.1);}.map-btn.m-forgot:hover .map-btn-desc,.map-btn.m-forgot.active .map-btn-desc{color:rgba(255,176,0,0.5);}
+  .map-btn.m-ancient .map-btn-name{color:#6b2020;}.map-btn.m-ancient:hover .map-btn-name,.map-btn.m-ancient.active .map-btn-name{color:var(--crt-red);}.map-btn.m-ancient.active{border-color:rgba(255,107,107,0.3);background:rgba(255,107,107,0.05);box-shadow:0 0 12px rgba(255,107,107,0.1);}.map-btn.m-ancient:hover .map-btn-desc,.map-btn.m-ancient.active .map-btn-desc{color:rgba(255,107,107,0.5);}
 
-  /* Tuner display */
-  .tuner-display{background:#080808;border:1px solid #1a1a1a;border-radius:6px;padding:clamp(8px,1.5vw,14px) clamp(10px,2vw,18px);display:flex;align-items:center;gap:clamp(6px,1.2vw,14px);flex-wrap:wrap;}
+  .tuner-display{background:#080808;border:1px solid #1a1a1a;border-radius:6px;padding:clamp(8px,1.5vw,14px) clamp(10px,2vw,18px);display:flex;align-items:center;gap:clamp(6px,1.2vw,14px);flex-wrap:wrap;position:relative;}
   .lock-btn{width:clamp(20px,3vw,28px);height:clamp(20px,3vw,28px);background:none;border:1px solid #222;border-radius:4px;font-size:clamp(0.5rem,1vw,0.7rem);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;padding:0;}
   .lock-btn.locked{border-color:var(--crt-amber);background:rgba(255,176,0,0.08);}
   .lock-btn:hover{border-color:#555;}
-  .tuner-query{display:flex;align-items:center;gap:clamp(4px,0.8vw,8px);}
-  .tuner-query-name{font-family:'Share Tech Mono',monospace;font-size:clamp(0.6rem,1.4vw,0.85rem);letter-spacing:2px;padding:clamp(3px,0.5vw,5px) clamp(6px,1vw,10px);background:rgba(255,255,255,0.03);border:1px solid #1a1a1a;border-radius:3px;min-width:clamp(60px,12vw,120px);text-align:center;transition:color 0.3s,border-color 0.3s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:clamp(100px,20vw,200px);}
+  .tuner-query{display:flex;align-items:center;gap:clamp(4px,0.8vw,8px);position:relative;}
+  .tuner-query-name{
+    font-family:'Share Tech Mono',monospace;font-size:clamp(0.6rem,1.4vw,0.85rem);
+    letter-spacing:2px;padding:clamp(3px,0.5vw,5px) clamp(6px,1vw,10px);
+    background:rgba(255,255,255,0.03);border:1px solid #1a1a1a;border-radius:3px;
+    min-width:clamp(60px,12vw,120px);text-align:center;transition:color 0.3s,border-color 0.3s;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:clamp(100px,20vw,200px);
+    cursor:pointer;user-select:none;
+  }
+  .tuner-query-name:hover{background:rgba(255,255,255,0.06);border-color:#444;}
+
+  /* Query picker dropdown */
+  .query-picker{
+    display:none;position:absolute;top:100%;left:0;z-index:100;
+    margin-top:6px;min-width:220px;max-width:300px;max-height:320px;overflow-y:auto;
+    background:#0c0c0c;border:1px solid #333;border-radius:6px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.8);
+    scrollbar-width:thin;scrollbar-color:#333 transparent;
+  }
+  .query-picker::-webkit-scrollbar{width:4px;}
+  .query-picker::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
+  .query-picker.open{display:block;}
+  .qp-item{
+    padding:clamp(5px,0.8vw,8px) clamp(8px,1.5vw,14px);
+    font-family:'Share Tech Mono',monospace;font-size:clamp(0.5rem,1.1vw,0.7rem);
+    color:#777;letter-spacing:1px;cursor:pointer;
+    transition:all 0.1s;border-bottom:1px solid #111;
+    display:flex;align-items:center;gap:8px;
+  }
+  .qp-item:last-child{border-bottom:none;}
+  .qp-item:hover{background:rgba(255,255,255,0.05);color:#ccc;}
+  .qp-item.selected{color:var(--crt-green);background:rgba(57,255,20,0.05);}
+  .qp-item .qp-dot{width:4px;height:4px;border-radius:50%;background:#333;flex-shrink:0;}
+  .qp-item.selected .qp-dot{background:var(--crt-green);box-shadow:0 0 4px var(--crt-green);}
+  .qp-item.has-fill::after{content:'####';font-size:0.5em;color:#333;margin-left:auto;}
+  .qp-item.no-fill::after{content:'fixed';font-size:0.5em;color:#222;margin-left:auto;}
+
   .shuf-btn{width:clamp(22px,3.5vw,32px);height:clamp(22px,3.5vw,32px);background:rgba(255,255,255,0.03);border:1px solid #222;border-radius:4px;color:#555;font-size:clamp(0.6rem,1.2vw,0.8rem);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;padding:0;flex-shrink:0;}
   .shuf-btn:hover{color:#aaa;border-color:#555;background:rgba(255,255,255,0.06);}
   .shuf-btn:active{transform:scale(0.9);}
@@ -160,17 +194,14 @@
   .panel-h{font-family:'Press Start 2P',monospace;font-size:clamp(0.35rem,1vw,0.55rem);color:var(--crt-amber);letter-spacing:2px;margin:clamp(10px,2vw,18px) 0 clamp(6px,1vw,10px);text-shadow:0 0 8px rgba(255,176,0,0.2);}
   .panel-h:first-child{margin-top:0;}
   .panel-p{font-family:'VT323',monospace;font-size:clamp(0.85rem,2vw,1.15rem);color:#888;line-height:1.6;margin-bottom:0.6rem;}
-  .panel-p a{color:var(--crt-blue);text-decoration:none;}
-  .panel-p a:hover{text-decoration:underline;}
+  .panel-p a{color:var(--crt-blue);text-decoration:none;}.panel-p a:hover{text-decoration:underline;}
   .panel-p strong{color:#bbb;}
   .panel-controls-grid{display:grid;grid-template-columns:auto 1fr;gap:4px clamp(8px,2vw,16px);align-items:baseline;margin:0.5rem 0;}
   .panel-key{font-family:'Share Tech Mono',monospace;font-size:clamp(0.5rem,1.2vw,0.7rem);color:var(--crt-green);text-shadow:0 0 4px rgba(57,255,20,0.2);white-space:nowrap;}
   .panel-desc{font-family:'VT323',monospace;font-size:clamp(0.8rem,1.8vw,1.05rem);color:#777;line-height:1.4;}
   .map-card{background:rgba(255,255,255,0.02);border:1px solid #1a1a1a;border-radius:4px;padding:clamp(8px,1.5vw,14px);margin-bottom:clamp(6px,1vw,10px);}
   .map-card-title{font-family:'Press Start 2P',monospace;font-size:clamp(0.22rem,0.6vw,0.35rem);letter-spacing:2px;margin-bottom:4px;}
-  .map-card-title.mc-fresh{color:var(--crt-green);}
-  .map-card-title.mc-forgot{color:var(--crt-amber);}
-  .map-card-title.mc-ancient{color:var(--crt-red);}
+  .map-card-title.mc-fresh{color:var(--crt-green);}.map-card-title.mc-forgot{color:var(--crt-amber);}.map-card-title.mc-ancient{color:var(--crt-red);}
   .map-card p{font-family:'VT323',monospace;font-size:clamp(0.8rem,1.8vw,1.05rem);color:#777;line-height:1.5;}
   .map-card .map-examples{font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);color:#444;margin-top:4px;letter-spacing:1px;line-height:1.6;}
   .credit-block{display:flex;gap:clamp(8px,2vw,16px);align-items:flex-start;margin-bottom:clamp(8px,1.5vw,14px);}
@@ -178,8 +209,7 @@
   .credit-text{flex:1;}
   .credit-text .credit-name{font-family:'Press Start 2P',monospace;font-size:clamp(0.25rem,0.7vw,0.38rem);color:var(--crt-green);letter-spacing:1px;margin-bottom:2px;}
   .credit-text .credit-role{font-family:'VT323',monospace;font-size:clamp(0.8rem,1.8vw,1.05rem);color:#777;line-height:1.4;}
-  .credit-text a{color:var(--crt-blue);text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);}
-  .credit-text a:hover{text-decoration:underline;}
+  .credit-text a{color:var(--crt-blue);text-decoration:none;font-family:'Share Tech Mono',monospace;font-size:clamp(0.45rem,1vw,0.6rem);}.credit-text a:hover{text-decoration:underline;}
   .panel-divider{border:none;border-top:1px solid #1a1a1a;margin:clamp(8px,2vw,16px) 0;}
   #error-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(100px);background:rgba(255,0,0,0.15);border:1px solid rgba(255,0,0,0.3);padding:0.6rem 1.5rem;font-family:'Share Tech Mono',monospace;font-size:0.8rem;color:#ff4444;border-radius:4px;z-index:9999;transition:transform 0.3s ease;pointer-events:none;max-width:90vw;text-align:center;}
   #error-toast.visible{transform:translateX(-50%) translateY(0);}
@@ -194,9 +224,27 @@
 <body>
 <div class="page-vignette"></div>
 <div id="file-warning"><h1>⚠ YOUTUBE BLOCKS EMBEDS FROM file://</h1><p>Put both files in a folder, open a terminal there, and run:</p><code>python serve.py</code><p>Then go to <strong style="color:var(--crt-green)">http://localhost:8666/yrb-surfer.html</strong></p><div class="small">On Windows use <strong>python</strong>, on Mac/Linux use <strong>python3</strong>.<br>Need Python? <a href="https://python.org" target="_blank">python.org</a></div></div>
-<div id="setup-screen"><h1>THE GRAVEYARD</h1><div class="setup-subtitle">YouTube's Recycle Bin Surfer</div><div class="setup-box"><input type="text" id="api-key-input" placeholder="PASTE YOUR YOUTUBE API KEY" spellcheck="false" autocomplete="off"><button id="go-btn">TUNE IN</button><div class="setup-error" id="setup-error"></div></div><div class="setup-steps"><p><span class="step-num">1.</span> Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">console.cloud.google.com/apis/credentials</a></p><p><span class="step-num">2.</span> Click <strong style="color:#aaa;">+ CREATE CREDENTIALS</strong> → <strong style="color:#aaa;">API key</strong></p><p><span class="step-num">3.</span> Make sure <a href="https://console.cloud.google.com/apis/library/youtube.googleapis.com" target="_blank">YouTube Data API v3</a> is enabled</p><p><span class="step-num">4.</span> Paste the key above</p><div class="note">Free tier ≈ 100 searches/day.</div></div></div>
+
+<!-- SETUP -->
+<div id="setup-screen">
+  <h1>THE GRAVEYARD</h1>
+  <div class="setup-subtitle">YouTube's Recycle Bin Surfer</div>
+  <div class="setup-box">
+    <input type="text" id="worker-url-input" placeholder="PASTE YOUR CLOUDFLARE WORKER URL" spellcheck="false" autocomplete="off">
+    <button class="setup-free-btn" id="worker-btn">⌁ CONNECT</button>
+    <div class="setup-error" id="setup-error"></div>
+    <div class="setup-divider"><span>or</span></div>
+    <input type="text" id="api-key-input" placeholder="YOUTUBE API KEY (OPTIONAL — ~100 WARPS/DAY)" spellcheck="false" autocomplete="off">
+    <button class="setup-btn" id="go-btn">USE API KEY</button>
+  </div>
+  <div class="setup-steps">
+    <p><strong style="color:var(--crt-amber);">Recommended:</strong> Deploy the free <a href="https://github.com" target="_blank">Cloudflare Worker</a> (5 min, see setup guide) for <strong style="color:var(--crt-green);">unlimited warps</strong>.</p>
+    <p><strong style="color:#666;">Alternatively:</strong> Use a <a href="https://console.cloud.google.com/apis/credentials" target="_blank">YouTube API key</a>, but it's limited to ~100 warps/day.</p>
+  </div>
+</div>
 
 <div id="main-container">
+  <div class="mode-badge" id="mode-badge" title="Click to switch mode">FREE</div>
   <div class="tv-housing"><div class="tv-outer"><div class="tv-bezel">
     <div class="screen-container flicker" id="screen">
       <div class="screen-glare"></div>
@@ -235,8 +283,9 @@
     <div class="tuner-display">
       <div class="tuner-query">
         <button class="lock-btn" id="lock-query" title="Lock query pattern">🔓</button>
-        <div class="tuner-query-name" id="tuner-query-name">—</div>
+        <div class="tuner-query-name" id="tuner-query-name" title="Click to browse queries">—</div>
         <button class="shuf-btn" id="shuf-query" title="Shuffle query (Q)">↻</button>
+        <div class="query-picker" id="query-picker"></div>
       </div>
       <div class="tuner-sep"></div>
       <div class="tuner-fill">
@@ -256,7 +305,7 @@
     <button class="bottom-nav-btn" data-panel="panel-credits">CREDITS</button>
   </div>
   <div class="bottom-panel" id="panel-about"><div class="panel-h">WHAT IS THIS?</div><div class="panel-p">THE GRAVEYARD is a tool for surfing YouTube's hidden underbelly — the millions of videos uploaded with default filenames, zero views, and no intention of ever being found. Think of it as channel surfing through the internet's junk drawer.</div><div class="panel-p">Every day, people accidentally upload videos straight from their cameras and phones with names like <strong>IMG_4293.MOV</strong> or <strong>GOPR0847</strong>. These videos don't get titles, descriptions, or tags. They sit in YouTube's database forever, unseen — until now.</div><div class="panel-h">WHY DOES IT EXIST?</div><div class="panel-p">There's something fascinating about unfiltered, unedited glimpses into other people's lives. A dashcam in rural Russia. A kid's first Minecraft recording. A family barbecue from 2009 shot on a Flip camcorder. Someone's cat, uploaded from a flip phone via picture mail in 2007.</div><div class="panel-p">These aren't content — they're artifacts. THE GRAVEYARD lets you discover them the way you'd discover something flipping through channels at 2 AM. No algorithm. No recommendations. Just raw, accidental humanity.</div><div class="panel-h">HOW DOES IT WORK?</div><div class="panel-p">The surfer uses the <strong>YouTube Recycle Bin</strong> methodology — searching for default camera filenames, auto-generated titles, and forgotten upload patterns. Each search generates random parameters (like <strong>DSCF</strong> + a random 4-digit number). Results are verified for embedding, shuffled, and served through a retro CRT TV interface.</div></div>
-  <div class="bottom-panel" id="panel-howto"><div class="panel-h">THE TUNER</div><div class="panel-p">The tuner rack below the TV has three layers that build your search query. Each can be <strong>locked</strong> independently so WARP won't change it.</div><div class="panel-controls-grid"><div class="panel-key">MAP (1 2 3)</div><div class="panel-desc">The era/category — Fresh, Forgotten, or Ancient. Click to switch and immediately search.</div><div class="panel-key">QUERY ↻ (Q)</div><div class="panel-desc">The keyphrase pattern (e.g., GOPR, IMG, FullSizeRender). Shuffle to pick a different pattern within the current map.</div><div class="panel-key">FILL ↻ (R)</div><div class="panel-desc">The random numbers or date shown as an odometer. Shuffle to re-roll. Some queries have no fill.</div><div class="panel-key">🔒 LOCKS</div><div class="panel-desc">Click the lock icons to freeze a layer. Locked layers survive WARPs. Lock the query but unlock the fill to explore different numbers for the same camera model.</div><div class="panel-key">⌁ WARP (D)</div><div class="panel-desc">Randomizes all unlocked layers and searches. Your main discovery tool.</div></div><div class="panel-h">TV CONTROLS</div><div class="panel-controls-grid"><div class="panel-key">CH ▲/▼ (↑↓)</div><div class="panel-desc">Surf through videos in the current playlist. Auto-warps at the end.</div><div class="panel-key">VOL</div><div class="panel-desc">Drag the knob up/down or scroll to adjust 0–100. M to mute.</div><div class="panel-key">POWER (P)</div><div class="panel-desc">Turn the TV on or off.</div></div><hr class="panel-divider"><div class="panel-h">THE THREE MAPS</div><div class="map-card"><div class="map-card-title mc-fresh">FRESH</div><p>Recent uploads sorted by <strong>date</strong>. Smartphones, apps, screen recorders. Closest to a live feed of accidental uploads.</p><div class="map-examples">IMG · MVI · PXL · VID · WIN · InShot · WhatsApp Video · FullSizeRender · RPReplay · My Movie · Bandicam · Javaw · Robloxapp · VLC Record · .MP4 · .MOV · .AVI · .3gp</div></div><div class="map-card"><div class="map-card-title mc-forgot">FORGOTTEN</div><p>Camera dumps 2008–2023 sorted by <strong>view count</strong>. The true zero-view graveyard — dashcams, bodycams, decade-old camera tests.</p><div class="map-examples">DSC · DSCF · DSCN · GOPR · GH01 · DJI · SAM · FILE · MAH0 · MOV0 · M2U0 · SANY · HPIM · SDC1 · GEDC · AMBA · Axon Body · AVSEQ · Flipagram</div></div><div class="map-card"><div class="map-card-title mc-ancient">ANCIENT</div><p>YouTube relics 2006–2010 sorted by <strong>view count</strong>. Flip phones, picture mail, MMS uploads. YouTube archaeology.</p><div class="map-examples">Picture Mail · Media1.3gp · Video.3g2 · Multimedia Message · Video from my phone · My Great Movie · Flip Video Camcorder · muuvee</div></div><hr class="panel-divider"><div class="panel-h">API KEY</div><div class="panel-p">Free YouTube Data API v3 key from <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Google Cloud Console</a>. ~100 warps/day on free tier. Channel surfing uses zero quota.</div></div>
+  <div class="bottom-panel" id="panel-howto"><div class="panel-h">THE TUNER</div><div class="panel-p">The tuner rack below the TV has three layers that build your search query. Each can be <strong>locked</strong> independently so WARP won't change it.</div><div class="panel-controls-grid"><div class="panel-key">MAP (1 2 3)</div><div class="panel-desc">The era/category — Fresh, Forgotten, or Ancient. Click to switch and immediately search.</div><div class="panel-key">QUERY ↻ (Q)</div><div class="panel-desc">The keyphrase pattern. Click the name to browse all queries in the current map, or ↻ to shuffle randomly.</div><div class="panel-key">FILL ↻ (R)</div><div class="panel-desc">The random numbers or date shown as an odometer. Shuffle to re-roll. Some queries have no fill.</div><div class="panel-key">🔒 LOCKS</div><div class="panel-desc">Click the lock icons to freeze a layer. Locked layers survive WARPs.</div><div class="panel-key">⌁ WARP (D)</div><div class="panel-desc">Randomizes all unlocked layers and searches. Your main discovery tool.</div></div><div class="panel-h">TV CONTROLS</div><div class="panel-controls-grid"><div class="panel-key">CH ▲/▼ (↑↓)</div><div class="panel-desc">Surf through videos in the current playlist. Auto-warps at the end.</div><div class="panel-key">VOL</div><div class="panel-desc">Drag the knob up/down or scroll to adjust 0–100. M to mute.</div><div class="panel-key">POWER (P)</div><div class="panel-desc">Turn the TV on or off.</div></div><hr class="panel-divider"><div class="panel-h">THE THREE MAPS</div><div class="map-card"><div class="map-card-title mc-fresh">FRESH</div><p>Recent uploads sorted by <strong>date</strong>. Smartphones, apps, screen recorders.</p><div class="map-examples">IMG · MVI · PXL · VID · WIN · InShot · WhatsApp Video · FullSizeRender · RPReplay · My Movie · Bandicam · Javaw · Robloxapp · VLC Record · .MP4 · .MOV · .AVI · .3gp</div></div><div class="map-card"><div class="map-card-title mc-forgot">FORGOTTEN</div><p>Camera dumps 2008–2023 sorted by <strong>view count</strong>. Dashcams, bodycams, decade-old camera tests.</p><div class="map-examples">DSC · DSCF · DSCN · GOPR · GH01 · DJI · SAM · FILE · MAH0 · MOV0 · M2U0 · SANY · HPIM · SDC1 · GEDC · AMBA · Axon Body · AVSEQ · Flipagram</div></div><div class="map-card"><div class="map-card-title mc-ancient">ANCIENT</div><p>YouTube relics 2006–2010 sorted by <strong>view count</strong>. Flip phones, picture mail, MMS.</p><div class="map-examples">Picture Mail · Media1.3gp · Video.3g2 · Multimedia Message · Video from my phone · My Great Movie · Flip Video Camcorder · muuvee</div></div><hr class="panel-divider"><div class="panel-h">MODES</div><div class="panel-p"><strong style="color:var(--crt-amber);">Worker mode</strong> — uses your Cloudflare Worker proxy. Unlimited warps, free, fast & reliable.</div><div class="panel-p"><strong style="color:var(--crt-green);">API mode</strong> — uses YouTube Data API v3 directly. Faster, but ~100 warps/day on free tier.</div></div>
   <div class="bottom-panel" id="panel-credits"><div class="panel-h">CREDITS & THANKS</div><div class="credit-block"><div class="credit-icon">📼</div><div class="credit-text"><div class="credit-name">KVN AUST</div><div class="credit-role">Creator of the <strong>YouTube Recycle Bin</strong> methodology — the keyphrase maps, search patterns, and discovery techniques that make this tool possible.</div><a href="https://www.youtube.com/@KVNAUST" target="_blank">youtube.com/@KVNAUST</a></div></div><div class="credit-block"><div class="credit-icon">📄</div><div class="credit-text"><div class="credit-name">THE ORIGINAL DOCUMENT</div><div class="credit-role">The comprehensive guide to the YouTube Recycle Bin — source material for all three keyphrase maps.</div><a href="https://docs.google.com/document/d/19cPH_LDXj6jjLUPPKn1OITJ0jJx3MrJIm9B7fUqaJD8/" target="_blank">YouTube Recycle Bin — Google Doc</a></div></div><hr class="panel-divider"><div class="panel-p" style="color:#444;font-size:clamp(0.7rem,1.5vw,0.9rem);">THE GRAVEYARD is free and open-source. No data collected. No tracking. Your API key never leaves your browser.</div></div>
 </div>
 
@@ -268,20 +317,20 @@ if(location.protocol==='file:'){document.getElementById('file-warning').classLis
 function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
 function pad(n,l){return n.toString().padStart(l,'0');}
 function pick(a){return a[Math.floor(Math.random()*a.length)];}
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function shuffleArr(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 const MO=['January','February','March','April','May','June','July','August','September','October','November','December'];
 function dateFmt(){const now=new Date();const d=new Date(now);d.setDate(d.getDate()-rand(1,730));return`${d.getFullYear()}${pad(d.getMonth()+1,2)}${pad(d.getDate(),2)}`;}
 
 const MAPS={
-  fresh:{name:'FRESH',order:'date',desc:'Recent smartphone & app uploads, sorted by date',keys:[
-    {l:'IMG',fill:()=>rand(1000,9999).toString(),q:(f)=>`IMG ${f}`},
-    {l:'MVI',fill:()=>rand(1000,9999).toString(),q:(f)=>`MVI ${f}`},
-    {l:'YYYYMMDD',fill:()=>dateFmt(),q:(f)=>f},
-    {l:'WIN',fill:()=>dateFmt(),q:(f)=>`WIN ${f}`},
-    {l:'VID',fill:()=>dateFmt(),q:(f)=>`VID ${f}`},
-    {l:'PXL',fill:()=>dateFmt(),q:(f)=>`PXL ${f}`},
-    {l:'InShot',fill:()=>dateFmt(),q:(f)=>`InShot ${f}`},
-    {l:'My Movie',fill:()=>rand(1,15).toString(),q:(f)=>`"My Movie ${f}"`},
+  fresh:{name:'FRESH',order:'date',desc:'Recent smartphone & app uploads',keys:[
+    {l:'IMG',fill:()=>rand(1000,9999).toString(),q:f=>`IMG ${f}`},
+    {l:'MVI',fill:()=>rand(1000,9999).toString(),q:f=>`MVI ${f}`},
+    {l:'YYYYMMDD',fill:()=>dateFmt(),q:f=>f},
+    {l:'WIN',fill:()=>dateFmt(),q:f=>`WIN ${f}`},
+    {l:'VID',fill:()=>dateFmt(),q:f=>`VID ${f}`},
+    {l:'PXL',fill:()=>dateFmt(),q:f=>`PXL ${f}`},
+    {l:'InShot',fill:()=>dateFmt(),q:f=>`InShot ${f}`},
+    {l:'My Movie',fill:()=>rand(1,15).toString(),q:f=>`"My Movie ${f}"`},
     {l:'FullSizeRender',fill:null,q:()=>'FullSizeRender'},
     {l:'RPReplay',fill:null,q:()=>'RPReplay'},
     {l:'.MP4',fill:null,q:()=>'".MP4"'},
@@ -295,40 +344,40 @@ const MAPS={
     {l:'Javaw',fill:null,q:()=>'"Javaw"'},
     {l:'Robloxapp',fill:null,q:()=>'Robloxapp'},
     {l:'VLC Record',fill:null,q:()=>'VLC Record'},
-    {l:'WhatsApp Video',fill:()=>new Date().getFullYear().toString(),q:(f)=>`WhatsApp Video ${f}`},
-    {l:'Capture',fill:()=>dateFmt(),q:(f)=>`Capture ${f}`},
+    {l:'WhatsApp Video',fill:()=>new Date().getFullYear().toString(),q:f=>`WhatsApp Video ${f}`},
+    {l:'Capture',fill:()=>dateFmt(),q:f=>`Capture ${f}`},
     {l:'VTS 01',fill:null,q:()=>'VTS 01'},
-    {l:'YouCut',fill:()=>dateFmt(),q:(f)=>`YouCut ${f}`},
+    {l:'YouCut',fill:()=>dateFmt(),q:f=>`YouCut ${f}`},
   ]},
-  forgotten:{name:'FORGOTTEN',order:'viewCount',desc:'Camera dumps & device footage — the 0-view graveyard',keys:[
-    {l:'DSC',fill:()=>rand(1000,9999).toString(),q:(f)=>`DSC ${f}`},
-    {l:'DSCF',fill:()=>rand(1000,9999).toString(),q:(f)=>`DSCF${f}`},
-    {l:'DSCN',fill:()=>rand(1000,9999).toString(),q:(f)=>`DSCN${f}`},
-    {l:'GOPR',fill:()=>rand(1000,9999).toString(),q:(f)=>`GOPR${f}`},
-    {l:'GH01',fill:()=>rand(1000,9999).toString(),q:(f)=>`GH01${f}`},
-    {l:'DJI',fill:()=>rand(1,2000).toString(),q:(f)=>`DJI ${f}`},
-    {l:'SAM',fill:()=>rand(1000,9999).toString(),q:(f)=>`SAM ${f}`},
-    {l:'FILE',fill:()=>rand(1000,9999).toString(),q:(f)=>`FILE${f}`},
-    {l:'MAH0',fill:()=>rand(1000,9999).toString(),q:(f)=>`MAH0${f}`},
-    {l:'MOV0',fill:()=>rand(1000,9999).toString(),q:(f)=>`MOV0${f}`},
-    {l:'M2U0',fill:()=>rand(1000,9999).toString(),q:(f)=>`M2U0${f}`},
-    {l:'SANY',fill:()=>rand(1000,9999).toString(),q:(f)=>`SANY${f}`},
-    {l:'HPIM',fill:()=>rand(1000,9999).toString(),q:(f)=>`HPIM${f}`},
-    {l:'SDC1',fill:()=>rand(1000,9999).toString(),q:(f)=>`SDC1${f}`},
-    {l:'GEDC',fill:()=>rand(1000,9999).toString(),q:(f)=>`GEDC${f}`},
-    {l:'Video####',fill:()=>rand(1000,9999).toString(),q:(f)=>`Video${f}`},
-    {l:'AMBA',fill:()=>rand(1,5000).toString(),q:(f)=>`AMBA${f}`},
-    {l:'SUNP',fill:()=>rand(1000,1500).toString(),q:(f)=>`SUNP${f}`},
-    {l:'REC',fill:()=>pad(rand(1,1000),4),q:(f)=>`REC ${f}`},
-    {l:'DSCI',fill:()=>rand(1,4000).toString(),q:(f)=>`DSCI${f}`},
+  forgotten:{name:'FORGOTTEN',order:'viewCount',desc:'Camera dumps — the 0-view graveyard',keys:[
+    {l:'DSC',fill:()=>rand(1000,9999).toString(),q:f=>`DSC ${f}`},
+    {l:'DSCF',fill:()=>rand(1000,9999).toString(),q:f=>`DSCF${f}`},
+    {l:'DSCN',fill:()=>rand(1000,9999).toString(),q:f=>`DSCN${f}`},
+    {l:'GOPR',fill:()=>rand(1000,9999).toString(),q:f=>`GOPR${f}`},
+    {l:'GH01',fill:()=>rand(1000,9999).toString(),q:f=>`GH01${f}`},
+    {l:'DJI',fill:()=>rand(1,2000).toString(),q:f=>`DJI ${f}`},
+    {l:'SAM',fill:()=>rand(1000,9999).toString(),q:f=>`SAM ${f}`},
+    {l:'FILE',fill:()=>rand(1000,9999).toString(),q:f=>`FILE${f}`},
+    {l:'MAH0',fill:()=>rand(1000,9999).toString(),q:f=>`MAH0${f}`},
+    {l:'MOV0',fill:()=>rand(1000,9999).toString(),q:f=>`MOV0${f}`},
+    {l:'M2U0',fill:()=>rand(1000,9999).toString(),q:f=>`M2U0${f}`},
+    {l:'SANY',fill:()=>rand(1000,9999).toString(),q:f=>`SANY${f}`},
+    {l:'HPIM',fill:()=>rand(1000,9999).toString(),q:f=>`HPIM${f}`},
+    {l:'SDC1',fill:()=>rand(1000,9999).toString(),q:f=>`SDC1${f}`},
+    {l:'GEDC',fill:()=>rand(1000,9999).toString(),q:f=>`GEDC${f}`},
+    {l:'Video####',fill:()=>rand(1000,9999).toString(),q:f=>`Video${f}`},
+    {l:'AMBA',fill:()=>rand(1,5000).toString(),q:f=>`AMBA${f}`},
+    {l:'SUNP',fill:()=>rand(1000,1500).toString(),q:f=>`SUNP${f}`},
+    {l:'REC',fill:()=>pad(rand(1,1000),4),q:f=>`REC ${f}`},
+    {l:'DSCI',fill:()=>rand(1,4000).toString(),q:f=>`DSCI${f}`},
     {l:'Test Upload',fill:null,q:()=>'"Test upload"'},
     {l:'Axon Body 2',fill:null,q:()=>'"Axon Body 2 Video"'},
-    {l:'Bandicam (Old)',fill:()=>`${rand(2012,2023)} ${pad(rand(1,12),2)}`,q:(f)=>`Bandicam ${f}`},
+    {l:'Bandicam (Old)',fill:()=>`${rand(2012,2023)} ${pad(rand(1,12),2)}`,q:f=>`Bandicam ${f}`},
     {l:'Android Upload',fill:null,q:()=>'"This video was uploaded from an Android phone"'},
     {l:'Sprint PictureMail',fill:null,q:()=>'"Sprint PictureMail"'},
-    {l:'AVSEQ',fill:()=>pad(rand(1,99),2),q:(f)=>`AVSEQ${f}`},
+    {l:'AVSEQ',fill:()=>pad(rand(1,99),2),q:f=>`AVSEQ${f}`},
     {l:'копия видео',fill:null,q:()=>'"копия видео"'},
-    {l:'Flipagram',fill:()=>`${pick(MO)} ${rand(2013,2019)}`,q:(f)=>`Flipagram ${f}`},
+    {l:'Flipagram',fill:()=>`${pick(MO)} ${rand(2013,2019)}`,q:f=>`Flipagram ${f}`},
   ]},
   ancient:{name:'ANCIENT',order:'viewCount',desc:'Early YouTube relics — flip phones & picture mail',keys:[
     {l:'Picture Mail!',fill:null,q:()=>'"You have new picture mail! (video)"'},
@@ -338,27 +387,31 @@ const MAPS={
     {l:'Multimedia Msg',fill:null,q:()=>'"New Multimedia Message"'},
     {l:'Video from phone',fill:null,q:()=>'"Video from my phone"'},
     {l:'Mobile Upload',fill:null,q:()=>'"Video uploaded from my mobile phone"'},
-    {l:'Video0XX',fill:()=>`0${rand(1,9)}`,q:(f)=>`Video0${f}`},
+    {l:'Video0XX',fill:()=>`0${rand(1,9)}`,q:f=>`Video0${f}`},
     {l:'My Great Movie',fill:null,q:()=>'"My Great Movie"'},
     {l:'My First Project',fill:null,q:()=>'"My First Project"'},
     {l:'Vídeo (ES)',fill:null,q:()=>'"Vídeo desde mi teléfono"'},
-    {l:'muuvee',fill:()=>pad(rand(1,40),4),q:(f)=>`muuvee${f}`},
-    {l:'0_VIDEO',fill:()=>pad(rand(1,54),3),q:(f)=>`0_VIDEO_0${f}`},
+    {l:'muuvee',fill:()=>pad(rand(1,40),4),q:f=>`muuvee${f}`},
+    {l:'0_VIDEO',fill:()=>pad(rand(1,54),3),q:f=>`0_VIDEO_0${f}`},
     {l:'New Message',fill:null,q:()=>'"You have received a new message"'},
-    {l:'Flip Camcorder',fill:()=>{const m=pick(MO);const d=rand(1,28);const y=rand(2007,2010);return`${m} ${d}, ${y}`;},q:(f)=>`"Recorded on ${f} using a Flip Video Camcorder"`},
+    {l:'Flip Camcorder',fill:()=>{const m=pick(MO);const d=rand(1,28);const y=rand(2007,2010);return`${m} ${d}, ${y}`;},q:f=>`"Recorded on ${f} using a Flip Video Camcorder"`},
   ]}
 };
 const MAP_KEYS=['fresh','forgotten','ancient'];
 const MAP_COLORS={fresh:'#39ff14',forgotten:'#ffb000',ancient:'#ff6b6b'};
 
-let API_KEY='',isPoweredOn=true,isLoading=false,currentVideoId=null;
+// ═══ STATE ═══
+let API_KEY='',WORKER_URL='',searchMode='worker'; // 'worker' or 'api'
+let isPoweredOn=true,isLoading=false,currentVideoId=null;
 let osdTimeout,counterTimeout,volOsdTimeout;
 let playlist=[],playlistIdx=-1;
 let curMap='fresh',curQueryIdx=0,curFill='';
 let mapLocked=false,queryLocked=false,fillLocked=false;
 let volume=100;
 let ytPlayer=null,ytReady=false,skipTimer=null;
+let pickerOpen=false;
 
+// ═══ STATIC ═══
 const sCvs=document.getElementById('static-canvas'),sCtx=sCvs.getContext('2d');
 let sAnim=null;
 function resizeStatic(){const r=document.getElementById('screen').getBoundingClientRect();sCvs.width=Math.min(r.width,480);sCvs.height=Math.min(r.height,270);}
@@ -366,6 +419,7 @@ function drawStatic(){const w=sCvs.width,h=sCvs.height,img=sCtx.createImageData(
 function showStatic(){resizeStatic();document.getElementById('static-overlay').classList.add('active');if(!sAnim)drawStatic();}
 function hideStatic(){document.getElementById('static-overlay').classList.remove('active');if(sAnim){cancelAnimationFrame(sAnim);sAnim=null;}}
 
+// ═══ UI HELPERS ═══
 function flashOSD(n){const o=document.getElementById('channel-osd');document.getElementById('ch-num').textContent=(n||1).toString().padStart(2,'0');o.classList.add('visible');clearTimeout(osdTimeout);osdTimeout=setTimeout(()=>o.classList.remove('visible'),3000);}
 function showPlaylistCounter(){const c=document.getElementById('playlist-counter');c.textContent=`${playlistIdx+1} / ${playlist.length}`;c.classList.add('visible');clearTimeout(counterTimeout);counterTimeout=setTimeout(()=>c.classList.remove('visible'),3000);}
 function flashVolOSD(){const o=document.getElementById('vol-osd');const bars=Math.round(volume/10);o.innerHTML=`VOL ${'█'.repeat(bars)}<span style="color:#222">${'█'.repeat(10-bars)}</span> ${volume}`;o.classList.add('visible');clearTimeout(volOsdTimeout);volOsdTimeout=setTimeout(()=>o.classList.remove('visible'),2000);}
@@ -376,6 +430,8 @@ function showError(m){const t=document.getElementById('error-toast');t.textConte
 function getCurEntry(){return MAPS[curMap].keys[curQueryIdx];}
 function buildFullQuery(){const e=getCurEntry();return e.fill?e.q(curFill):e.q();}
 function genFill(){const e=getCurEntry();return e.fill?e.fill():'';}
+
+function updateModeBadge(){const b=document.getElementById('mode-badge');b.textContent=searchMode==='api'?'API':'WORKER';b.className='mode-badge '+(searchMode==='api'?'api':'free');}
 
 function updateTunerUI(){
   const map=MAPS[curMap];const e=getCurEntry();const color=MAP_COLORS[curMap];
@@ -390,33 +446,79 @@ function updateTunerUI(){
   document.getElementById('lock-fill').textContent=fillLocked?'🔒':'🔓';document.getElementById('lock-fill').classList.toggle('locked',fillLocked);
   const fullQ=buildFullQuery();document.getElementById('readout-map').textContent=map.name;document.getElementById('readout-map').style.color=color;document.getElementById('readout-q').textContent=`SEARCH: ${fullQ.replace(/"/g,'')}`;
 }
+
+// ═══ QUERY PICKER ═══
+function buildQueryPicker(){
+  const picker=document.getElementById('query-picker');picker.innerHTML='';
+  const map=MAPS[curMap];const color=MAP_COLORS[curMap];
+  map.keys.forEach((entry,idx)=>{
+    const item=document.createElement('div');
+    item.className='qp-item'+(idx===curQueryIdx?' selected':'')+(entry.fill?' has-fill':' no-fill');
+    item.innerHTML=`<div class="qp-dot"></div><span>${entry.l}</span>`;
+    if(idx===curQueryIdx){item.querySelector('.qp-dot').style.background=color;item.querySelector('.qp-dot').style.boxShadow=`0 0 4px ${color}`;item.style.color=color;}
+    item.addEventListener('click',()=>{
+      curQueryIdx=idx;if(!fillLocked)curFill=genFill();
+      closePicker();updateTunerUI();doSearch();
+    });
+    picker.appendChild(item);
+  });
+}
+function togglePicker(){if(pickerOpen)closePicker();else openPicker();}
+function openPicker(){buildQueryPicker();document.getElementById('query-picker').classList.add('open');pickerOpen=true;}
+function closePicker(){document.getElementById('query-picker').classList.remove('open');pickerOpen=false;}
+
 function updateInfoStrip(title,channel,date){document.getElementById('info-title').textContent=title||'—';document.getElementById('info-meta').textContent=(channel||'')+(date?' · '+new Date(date).toLocaleDateString():'');const link=document.getElementById('info-yt-link');if(currentVideoId){link.href=`https://www.youtube.com/watch?v=${currentVideoId}`;link.style.visibility='visible';}}
 function clearInfoStrip(){document.getElementById('info-title').textContent='—';document.getElementById('info-meta').textContent='—';document.getElementById('info-yt-link').style.visibility='hidden';}
 
+// ═══ YOUTUBE PLAYER ═══
 function onYouTubeIframeAPIReady(){ytPlayer=new YT.Player('yt-player',{width:'100%',height:'100%',playerVars:{autoplay:1,controls:0,rel:0,modestbranding:1,iv_load_policy:3,playsinline:1,fs:0},events:{onReady:function(){ytReady=true;ytPlayer.setVolume(volume);},onStateChange:onPlayerStateChange,onError:onPlayerError}});}
 function onPlayerStateChange(e){if(e.data===YT.PlayerState.PLAYING){clearTimeout(skipTimer);hideStatic();hideStatus();document.getElementById('yt-player-wrap').style.opacity='1';}if(e.data===YT.PlayerState.ENDED)chUp();}
 function onPlayerError(e){clearTimeout(skipTimer);if(playlist.length>1){playlist.splice(playlistIdx,1);if(playlistIdx>=playlist.length)playlistIdx=0;setTimeout(()=>playCurrent(),300);}else setTimeout(()=>doWarp(),500);}
 function loadVideoInPlayer(vidId){currentVideoId=vidId;if(ytReady&&ytPlayer&&ytPlayer.loadVideoById){ytPlayer.loadVideoById({videoId:vidId});ytPlayer.setVolume(volume);}clearTimeout(skipTimer);skipTimer=setTimeout(()=>{if(playlist.length>1){playlist.splice(playlistIdx,1);if(playlistIdx>=playlist.length)playlistIdx=0;playCurrent();}else doWarp();},8000);}
 
-async function ytSearch(query,order){
+// ═══ SEARCH — YouTube API ═══
+async function ytSearchAPI(query,order){
   const url=`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=20&q=${encodeURIComponent(query)}&order=${order}&videoEmbeddable=true&key=${API_KEY}`;
-  const r=await fetch(url);if(!r.ok){if(r.status===403)showError('API quota exceeded or key invalid.');else showError(`API error: ${r.status}`);throw new Error(`${r.status}`);}
+  const r=await fetch(url);if(!r.ok){if(r.status===403)showError('API quota exceeded — switch to Free mode!');else showError(`API error: ${r.status}`);throw new Error(`${r.status}`);}
   const d=await r.json();const items=(d.items||[]).map(i=>({id:i.id.videoId,title:i.snippet.title,channel:i.snippet.channelTitle,date:i.snippet.publishedAt}));
   if(!items.length)return[];
+  // Embeddability check
   const ids=items.map(v=>v.id).join(',');
   try{const vr=await fetch(`https://www.googleapis.com/youtube/v3/videos?part=status&id=${ids}&key=${API_KEY}`);if(vr.ok){const vd=await vr.json();const ok=new Set((vd.items||[]).filter(v=>v.status&&v.status.embeddable).map(v=>v.id));return items.filter(v=>ok.has(v.id));}}catch(e){}
   return items;
 }
 
+// ═══ SEARCH — Cloudflare Worker (free, unlimited) ═══
+async function ytSearchWorker(query){
+  const url=`${WORKER_URL}?q=${encodeURIComponent(query)}`;
+  const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),12000);
+  try{
+    const r=await fetch(url,{signal:ctrl.signal});clearTimeout(timer);
+    if(!r.ok)throw new Error(`Worker returned ${r.status}`);
+    const data=await r.json();
+    if(data.error)throw new Error(data.error);
+    return(data.items||[]).filter(v=>v.id).slice(0,20);
+  }catch(e){clearTimeout(timer);throw e;}
+}
+
+// Unified search
+async function doYTSearch(query){
+  if(searchMode==='api')return ytSearchAPI(query,MAPS[curMap].order);
+  return ytSearchWorker(query);
+}
+
+// ═══ PLAY ═══
 function playCurrent(){if(!playlist.length)return;playlistIdx=((playlistIdx%playlist.length)+playlist.length)%playlist.length;const v=playlist[playlistIdx];showStatic();showStatus('TUNING...');document.getElementById('yt-player-wrap').style.opacity='0';loadVideoInPlayer(v.id);updateInfoStrip(v.title,v.channel,v.date);setTimeout(()=>{flashOSD(playlistIdx+1);showPlaylistCounter();},400);}
 
-function shuffleQuery(){if(queryLocked)return;const map=MAPS[curMap];curQueryIdx=rand(0,map.keys.length-1);if(!fillLocked)curFill=genFill();updateTunerUI();}
-function shuffleFill(){if(fillLocked)return;const e=getCurEntry();if(!e.fill)return;curFill=genFill();updateTunerUI();}
+// ═══ TUNER ACTIONS ═══
+function shuffleQuery(){if(queryLocked)return;curQueryIdx=rand(0,MAPS[curMap].keys.length-1);if(!fillLocked)curFill=genFill();updateTunerUI();}
+function shuffleFill(){if(fillLocked)return;if(!getCurEntry().fill)return;curFill=genFill();updateTunerUI();}
 
 function setMap(mk){
   if(!isPoweredOn||isLoading)return;
   curMap=mk;
-  if(!queryLocked){curQueryIdx=rand(0,MAPS[mk].keys.length-1);}else if(curQueryIdx>=MAPS[mk].keys.length){curQueryIdx=rand(0,MAPS[mk].keys.length-1);}
+  if(!queryLocked)curQueryIdx=rand(0,MAPS[mk].keys.length-1);
+  else if(curQueryIdx>=MAPS[mk].keys.length)curQueryIdx=rand(0,MAPS[mk].keys.length-1);
   if(!fillLocked)curFill=genFill();
   updateTunerUI();doSearch();
 }
@@ -434,9 +536,12 @@ async function doSearch(){
   const scr=document.getElementById('screen');scr.classList.remove('warping');void scr.offsetWidth;scr.classList.add('warping');
   showStatic();showStatus('⌁ WARPING...');document.getElementById('yt-player-wrap').style.opacity='0';
   for(let attempt=0;attempt<3;attempt++){
-    const query=buildFullQuery();const order=MAPS[curMap].order;
-    try{const results=await ytSearch(query,order);if(results.length>0){playlist=shuffle(results);playlistIdx=0;playCurrent();isLoading=false;return;}
-    if(!fillLocked&&getCurEntry().fill){curFill=genFill();updateTunerUI();}else if(!queryLocked){shuffleQuery();}
+    try{
+      const query=buildFullQuery();
+      const results=await doYTSearch(query);
+      if(results.length>0){playlist=shuffleArr(results);playlistIdx=0;playCurrent();isLoading=false;return;}
+      if(!fillLocked&&getCurEntry().fill){curFill=genFill();updateTunerUI();}
+      else if(!queryLocked){shuffleQuery();}
     }catch(err){if(err.message.includes('403'))break;}
   }
   hideStatic();showStatus('NO SIGNAL — PRESS D');setTimeout(()=>{hideStatus();showStatic();},2500);isLoading=false;
@@ -445,37 +550,82 @@ async function doSearch(){
 function chUp(){if(!isPoweredOn)return;if(!playlist.length){doWarp();return;}playlistIdx++;if(playlistIdx>=playlist.length){doWarp();return;}playCurrent();}
 function chDown(){if(!isPoweredOn)return;if(!playlist.length){doWarp();return;}playlistIdx--;if(playlistIdx<0)playlistIdx=playlist.length-1;playCurrent();}
 
+// ═══ VOLUME ═══
 function setVolume(v){volume=Math.max(0,Math.min(100,Math.round(v)));if(ytReady&&ytPlayer){ytPlayer.setVolume(volume);if(volume===0)ytPlayer.mute();else ytPlayer.unMute();}document.getElementById('knob-vol').style.transform=`rotate(${(volume/100)*270-135}deg)`;document.getElementById('vol-num').textContent=volume;flashVolOSD();}
-
 (function(){const knob=document.getElementById('knob-vol');let dragging=false,startY=0,startVol=0;
 knob.addEventListener('mousedown',e=>{dragging=true;startY=e.clientY;startVol=volume;e.preventDefault();});
 knob.addEventListener('touchstart',e=>{dragging=true;startY=e.touches[0].clientY;startVol=volume;},{passive:true});
-function onMove(y){if(!dragging)return;setVolume(startVol+(startY-y)*0.8);}
-document.addEventListener('mousemove',e=>onMove(e.clientY));
-document.addEventListener('touchmove',e=>{if(dragging)onMove(e.touches[0].clientY);},{passive:true});
+document.addEventListener('mousemove',e=>{if(dragging)setVolume(startVol+(startY-e.clientY)*0.8);});
+document.addEventListener('touchmove',e=>{if(dragging)setVolume(startVol+(startY-e.touches[0].clientY)*0.8);},{passive:true});
 document.addEventListener('mouseup',()=>{dragging=false;});
 document.addEventListener('touchend',()=>{dragging=false;});
 knob.addEventListener('wheel',e=>{e.preventDefault();setVolume(volume+(e.deltaY<0?5:-5));},{passive:false});
 })();
 
+// ═══ POWER ═══
 function togglePower(){
   if(isPoweredOn){isPoweredOn=false;clearTimeout(skipTimer);document.getElementById('power-led').classList.remove('on');document.getElementById('power-off-screen').classList.add('active');hideStatic();hideStatus();['channel-osd','playlist-counter','vol-osd'].forEach(id=>document.getElementById(id).classList.remove('visible'));if(ytReady&&ytPlayer)ytPlayer.stopVideo();clearInfoStrip();}
   else{isPoweredOn=true;document.getElementById('power-led').classList.add('on');document.getElementById('power-off-screen').classList.remove('active');showStatic();setTimeout(()=>doWarp(),600);}
 }
 
-function startApp(){
+// ═══ SETUP ═══
+function launchApp(){
+  const s=document.getElementById('setup-screen');s.classList.add('hidden');
+  setTimeout(()=>{document.getElementById('main-container').classList.add('active');resizeStatic();showStatic();setVolume(100);updateModeBadge();
+  curMap=pick(MAP_KEYS);curQueryIdx=rand(0,MAPS[curMap].keys.length-1);curFill=genFill();updateTunerUI();
+  function go(){if(ytReady)doSearch();else setTimeout(go,200);}setTimeout(go,600);},800);
+}
+
+// Restore saved worker URL
+try{const saved=localStorage.getItem('graveyard_worker');if(saved)document.getElementById('worker-url-input').value=saved;}catch(e){}
+try{const savedKey=localStorage.getItem('graveyard_apikey');if(savedKey)document.getElementById('api-key-input').value=savedKey;}catch(e){}
+
+document.getElementById('worker-btn').addEventListener('click',()=>{
+  let url=document.getElementById('worker-url-input').value.trim();
+  if(!url){document.getElementById('setup-error').textContent='Paste your Cloudflare Worker URL above';document.getElementById('setup-error').classList.add('visible');return;}
+  // Clean up URL
+  url=url.replace(/\/+$/,'');
+  if(!url.startsWith('http'))url='https://'+url;
+  document.getElementById('worker-btn').innerHTML='⌁ TESTING...';
+  const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),10000);
+  fetch(`${url}?q=test`,{signal:ctrl.signal})
+    .then(r=>{clearTimeout(timer);if(!r.ok)throw new Error(`${r.status}`);return r.json();})
+    .then(data=>{
+      if(data.error)throw new Error(data.error);
+      WORKER_URL=url;searchMode='worker';
+      try{localStorage.setItem('graveyard_worker',url);}catch(e){}
+      launchApp();
+    })
+    .catch(err=>{
+      clearTimeout(timer);
+      document.getElementById('worker-btn').innerHTML='⌁ CONNECT';
+      document.getElementById('setup-error').textContent=`Couldn't reach worker: ${err.message}. Check the URL and that it's deployed.`;
+      document.getElementById('setup-error').classList.add('visible');
+    });
+});
+document.getElementById('worker-url-input').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('worker-btn').click();});
+
+document.getElementById('go-btn').addEventListener('click',()=>{
   const key=document.getElementById('api-key-input').value.trim();
-  if(!key){document.getElementById('setup-error').textContent='Paste your API key above';document.getElementById('setup-error').classList.add('visible');return;}
+  if(!key){document.getElementById('setup-error').textContent='Paste your API key above, or set up a Worker';document.getElementById('setup-error').classList.add('visible');return;}
   API_KEY=key;document.getElementById('go-btn').textContent='TESTING...';
   fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=1&q=test&key=${key}`)
     .then(r=>{if(!r.ok)throw new Error(`${r.status}`);return r.json();})
-    .then(()=>{const s=document.getElementById('setup-screen');s.classList.add('hidden');setTimeout(()=>{document.getElementById('main-container').classList.add('active');resizeStatic();showStatic();setVolume(100);curMap=pick(MAP_KEYS);curQueryIdx=rand(0,MAPS[curMap].keys.length-1);curFill=genFill();updateTunerUI();function go(){if(ytReady)doSearch();else setTimeout(go,200);}setTimeout(go,600);},800);})
-    .catch(()=>{document.getElementById('go-btn').textContent='TUNE IN';document.getElementById('setup-error').textContent='Key didn\'t work. Check that YouTube Data API v3 is enabled.';document.getElementById('setup-error').classList.add('visible');});
-}
+    .then(()=>{searchMode='api';try{localStorage.setItem('graveyard_apikey',key);}catch(e){}launchApp();})
+    .catch(()=>{document.getElementById('go-btn').textContent='USE API KEY';document.getElementById('setup-error').textContent='Key didn\'t work. Check that YouTube Data API v3 is enabled.';document.getElementById('setup-error').classList.add('visible');});
+});
+document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('go-btn').click();});
 
-document.getElementById('go-btn').addEventListener('click',startApp);
-document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')startApp();});
+// Mode badge click — switch modes
+document.getElementById('mode-badge').addEventListener('click',()=>{
+  if(searchMode==='worker'&&API_KEY){searchMode='api';updateModeBadge();showError('Switched to API mode');}
+  else if(searchMode==='api'&&WORKER_URL){searchMode='worker';updateModeBadge();showError('Switched to Worker mode');}
+  else showError('Only one mode configured');
+});
+
+// ═══ EVENTS ═══
 MAP_KEYS.forEach(mk=>{document.getElementById('map-btn-'+mk).addEventListener('click',()=>setMap(mk));});
+document.getElementById('tuner-query-name').addEventListener('click',togglePicker);
 document.getElementById('shuf-query').addEventListener('click',()=>{shuffleQuery();doSearch();});
 document.getElementById('shuf-fill').addEventListener('click',()=>{shuffleFill();doSearch();});
 document.getElementById('lock-query').addEventListener('click',()=>{queryLocked=!queryLocked;updateTunerUI();});
@@ -486,8 +636,12 @@ document.getElementById('ch-down').addEventListener('click',chDown);
 document.getElementById('pwr-btn').addEventListener('click',togglePower);
 document.getElementById('power-off-screen').addEventListener('click',togglePower);
 
+// Close picker on outside click
+document.addEventListener('click',e=>{if(pickerOpen&&!e.target.closest('.tuner-query'))closePicker();});
+
 document.addEventListener('keydown',e=>{
   const s=document.getElementById('setup-screen');if(!s.classList.contains('hidden'))return;
+  if(pickerOpen&&e.key==='Escape'){closePicker();return;}
   switch(e.key){
     case'ArrowUp':case'w':case'W':e.preventDefault();chUp();break;
     case'ArrowDown':case's':case'S':e.preventDefault();chDown();break;
